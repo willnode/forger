@@ -10,6 +10,10 @@
     --out-back: cubic-bezier(.175, .885, .32, 1.275)
 }
 
+* {
+    box-sizing: border-box;
+}
+
 @media screen and (min-width: 480px) {
     :root {
         --side-nav: 3.2rem
@@ -190,11 +194,6 @@ pre code {
     background: transparent
 }
 
-::selection {
-    background: var(--flash);
-    color: #fff
-}
-
 li>h2 {
     color: var(--second)
 }
@@ -212,28 +211,6 @@ blockquote p,blockquote ul {
 
 blockquote :last-child {
     margin: 0
-}
-
-button {
-    font-family: inherit;
-    font-size: inherit;
-    background-color: transparent;
-    border: none;
-    color: currentColor;
-    cursor: pointer
-}
-
-button[disabled],.btn[disabled],.btn:hover[disabled] {
-    opacity: .55;
-    pointer-events: none
-}
-
-button>svg,.btn>svg {
-    position: relative;
-    top: -.1rem;
-    width: 2rem!important;
-    height: 2rem!important;
-    stroke: currentColor!important
 }
 
 .btn {
@@ -471,6 +448,7 @@ main.svelte-1vzj3k2.svelte-1vzj3k2 {
     }
 }
 
-.ukr.svelte-1vzj3k2 strong.svelte-1vzj3k2 {
-    color: #fc0
+.hidden {
+    display: none
 }
+

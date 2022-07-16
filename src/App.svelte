@@ -1,32 +1,34 @@
 <script>
-import { onMount } from "svelte";
-
+  import { onMount } from "svelte";
 
   import Repl from "../repl/src/Repl.svelte";
+  import { repl } from "./store";
+  import Container from "./app/Container.svelte";
 
-  /**
-   * @type {import("../repl/src/Repl.svelte").default}
-   */
-  let repl;
+  const defaultComponents = [
+    {
+      name: "App",
+      type: "svelte",
+      source: "<h1>Hello</h1>",
+    },
+  ];
 
   onMount(function () {
-    repl.set({
-      components: [
-        {
-          name: "App",
-          type: "svelte",
-          source: "<h1>Hello</h1>",
-        },
-      ],
+    let components = window.sessionStorage.project
+      ? JSON.parse(window.sessionStorage.project)
+      : defaultComponents;
+    $repl.set({
+      components,
     });
   });
 </script>
 
 <main>
   <Repl
-    bind:this={repl}
+    bind:this={$repl}
     workersUrl={"/workers"}
     svelteUrl="https://unpkg.com/svelte@3"
+    {Container}
   />
 </main>
 

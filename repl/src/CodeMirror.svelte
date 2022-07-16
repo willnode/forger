@@ -20,7 +20,7 @@
 	// than making this state-driven through props,
 	// because it's difficult to update an editor
 	// without resetting scroll otherwise
-	export async function set(new_code, new_mode) {
+	export async function set({ source:new_code, type:new_mode }) {
 		if (new_mode !== mode) {
 			await createEditor(mode = new_mode);
 		}

@@ -10,16 +10,21 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "@tsconfig/svelte": "^3.0.0",
     "codemirror": "^5.49.2",
     "estree-walker": "^0.9.0",
     "marked": "^4.0.0",
     "sourcemap-codec": "^1.4.6",
     "svelte": "^3.49.0",
+    "@types/js-yaml": "^4.0.5",
     "svelte-json-tree": "0.0.5",
     "vite": "^3.0.0",
-    "yootils": "0.0.16"
+    "yootils": "0.0.16",
+    "svelte-preprocess": "^4.10.7",
+    "typescript": "^4.0.0"
   },
   "dependencies": {
-    "acorn": "^8.7.1"
+    "acorn": "^8.7.1",
+    "js-yaml": "^4.1.0"
   }
 }

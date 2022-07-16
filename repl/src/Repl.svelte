@@ -1,7 +1,6 @@
 <script>
 	import { setContext, createEventDispatcher } from 'svelte';
 	import { writable } from 'svelte/store';
-	import SplitPane from './SplitPane.svelte';
 	import ComponentSelector from './Input/ComponentSelector.svelte';
 	import ModuleEditor from './Input/ModuleEditor.svelte';
 	import Output from './Output/index.svelte';
@@ -12,12 +11,10 @@
 	export let packagesUrl = 'https://unpkg.com';
 	export let svelteUrl = `${packagesUrl}/svelte`;
 	export let embedded = false;
-	export let orientation = 'columns';
 	export let relaxed = false;
-	export let fixed = false;
-	export let fixedPos = 50;
 	export let injectedJS = '';
 	export let injectedCSS = '';
+	export let Container;
 
 	const historyMap = new Map();
 
@@ -38,7 +35,7 @@
 		await output_ready;
 
 		injectedCSS = data.css || '';
-		await module_editor.set($selected.source, $selected.type);
+		await module_editor.set($selected);
 		output.set($selected, $compile_options);
 
 		historyMap.clear();
@@ -69,7 +66,7 @@
 			module_editor.update(matched_component.source);
 			output.update(matched_component, $compile_options);
 		} else {
-			module_editor.set(matched_component.source, matched_component.type);
+			module_editor.set(matched_component);
 			output.set(matched_component, $compile_options);
 
 			module_editor.clearHistory();
@@ -96,6 +93,9 @@
 		legacy: false
 	});
 
+	/**
+	 * @type {import('./CodeMirror.svelte').default}
+	 */
 	let module_editor;
 	let output;
 
@@ -183,7 +183,7 @@
 	function handle_select(component) {
 		historyMap.set(get_component_name($selected), module_editor.getHistory());
 		selected.set(component);
-		module_editor.set(component.source, component.type);
+		module_editor.set(component);
 		if (historyMap.has(get_component_name($selected))) {
 			module_editor.setHistory(historyMap.get(get_component_name($selected)));
 		} else {
@@ -222,50 +222,16 @@
 	}
 </script>
 
-<style>
-	.container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
-	.container :global(section) {
-		position: relative;
-		padding: 42px 0 0 0;
-		height: 100%;
-		box-sizing: border-box;
-	}
-
-	.container :global(section) > :global(*):first-child {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 42px;
-		box-sizing: border-box;
-	}
-
-	.container :global(section) > :global(*):last-child {
-		width: 100%;
-		height: 100%;
-	}
-</style>
-
 <svelte:window on:beforeunload={beforeUnload}/>
 
-<div class="container" class:orientation>
-	<SplitPane
-		type="{orientation === 'rows' ? 'vertical' : 'horizontal'}"
-		pos="{fixed ? fixedPos : orientation === 'rows' ? 50 : 60}"
-		{fixed}
-	>
-		<section slot=a>
-			<ComponentSelector {handle_select} on:add on:remove/>
-			<ModuleEditor bind:this={input} errorLoc="{sourceErrorLoc || runtimeErrorLoc}"/>
-		</section>
-
-		<section slot=b style='height: 100%;'>
-			<Output {svelteUrl} {workersUrl} {status} {embedded} {relaxed} {injectedJS} {injectedCSS}/>
-		</section>
-	</SplitPane>
-</div>
+<svelte:component this={Container} repl={this}>
+	<section slot=selector>
+		<ComponentSelector {handle_select} on:add on:remove/>
+	</section>
+	<section slot=editor>
+		<ModuleEditor bind:this={input} errorLoc="{sourceErrorLoc || runtimeErrorLoc}"/>
+	</section>
+	<section slot=output>
+		<Output {svelteUrl} {workersUrl} {status} {embedded} {relaxed} {injectedJS} {injectedCSS}/>
+	</section>
+</svelte:component>

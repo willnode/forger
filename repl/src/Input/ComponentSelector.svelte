@@ -39,7 +39,7 @@
 		// re-select, in case the type changed
 		handle_select($selected);
 
-		components = components; // TODO necessary?
+		// components = components; // TODO necessary?
 
 		// focus the editor, but wait a beat (so key events aren't misdirected)
 		setTimeout(request_focus);
@@ -143,7 +143,6 @@
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
-		height: 10em;
 	}
 
 	.file-tabs .button, .file-tabs button {
