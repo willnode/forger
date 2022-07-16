@@ -1,11 +1,14 @@
 <script>
-  import Repl from "./repl/Repl.svelte";
-  import bundler from "./repl/workers/bundler/index.js?worker&url";
-  import compiler from "./repl/workers/compiler/index.js?worker&url";
-
-  console.log(bundler);
+  import Repl from "../repl/src/Repl.svelte";
 </script>
 
 <main>
-  <Repl workersUrl={bundler} svelteUrl={compiler}/>
+  <Repl workersUrl={'/workers'}/>
 </main>
+
+<style>
+  main {
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
