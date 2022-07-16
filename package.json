@@ -1,0 +1,25 @@
+{
+  "name": "forger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.1",
+    "codemirror": "^5.49.2",
+    "estree-walker": "^0.9.0",
+    "marked": "^4.0.0",
+    "sourcemap-codec": "^1.4.6",
+    "svelte": "^3.49.0",
+    "svelte-json-tree": "0.0.5",
+    "vite": "^3.0.0",
+    "yootils": "0.0.16"
+  },
+  "dependencies": {
+    "acorn": "^8.7.1"
+  }
+}
