@@ -4,7 +4,7 @@
     export let url;
 </script>
 
-<AjaxGet {url} let:data >
+<AjaxGet {url} let:data={data} >
     {#if Array.isArray(data) && data.length > 0}
     {#each data as item}
         <slot data={item} />

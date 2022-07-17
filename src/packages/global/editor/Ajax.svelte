@@ -8,9 +8,11 @@
     export let template: Template;
 
     let url = "";
+    let name = "";
 
     onMount(() => {
         url = template.props.url || '""';
+        name = template.props.name || 'data';
     });
 
     function onChange(e: CustomEvent<(string | Template)[]>) {
@@ -28,12 +30,26 @@
     placeholder="URL"
     bind:value={url}
     on:input={(e) => {
-        url = e.currentTarget.value;
         dispatch("change", {
             ...template,
             props: {
                 ...template.props,
                 url,
+            },
+        });
+    }}
+/>
+
+<input
+    type="text"
+    placeholder="Name var"
+    bind:value={name}
+    on:input={(e) => {
+        dispatch("change", {
+            ...template,
+            props: {
+                ...template.props,
+                "let:data": name,
             },
         });
     }}

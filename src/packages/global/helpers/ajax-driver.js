@@ -19,7 +19,10 @@ export class AjaxDriver {
         this.old_url = ""
         this.state = writable("idle")
         var that = this;
-        this.unsub = this.url.subscribe(() => that.fetch())
+        this.unsub = this.url.subscribe((url) => that.fetch(url))
+        if (url) {
+            this.fetch(url)
+        }
     }
 
     destroy() {
@@ -47,16 +50,18 @@ export class AjaxDriver {
             return
         }
         this.state.set("loading")
-        api({
-            url,
-        }).json().then(response => {
+        var that = this;
+        api(url).json().then(response => {
             if (url.includes('#')) {
+                console.log(response);
+                console.log(url.substring(url.indexOf('#') + 1));
                 response = getProperty(response, url.substring(url.indexOf('#') + 1));
+                console.log(response);
             }
-            this.data.set(response)
-            this.state.set("ready")
+            that.data.set(response)
+            that.state.set("loaded")
         }).catch(error => {
-            this.state.set("error")
+            that.state.set("error")
             console.log(error);
         });
     }

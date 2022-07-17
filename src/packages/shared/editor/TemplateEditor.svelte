@@ -42,6 +42,8 @@ import { join } from "./utils";
                             source: file,
                             template: [],
                         });
+                    } else {
+                        component.source = file;
                     }
                 });
             }

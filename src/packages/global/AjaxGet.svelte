@@ -7,7 +7,7 @@
     let stateStore, dataStore, urlStore;
 
     $: {
-        if (driver.old_url != url) {
+        if (driver && driver.old_url != url) {
             urlStore.set(url);
         }
     }
@@ -43,6 +43,6 @@
             <div>Failed to get data (check console logs)</div>
         </slot>
     {:else if $stateStore == "loaded"}
-        <slot />
+        <slot {data} />
     {/if}
 {/if}

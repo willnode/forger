@@ -96,7 +96,10 @@
     .worksheet,
     .worksheet :global(section),
     .worksheet :global(.editor-wrapper),
-    .selector :global(.component-selector) {
+    .selector :global(.component-selector),
+    .output :global(section),
+    .output :global(section)>:global(*:last-child)
+    {
         width: 100%;
         height: 100%;
     }
