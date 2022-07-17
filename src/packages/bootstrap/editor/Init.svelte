@@ -8,13 +8,14 @@
     let version = "";
 
     onMount(() => {
-        version = template.props.version || '"latest"';
+        version = template.props.version || '';
     });
 
     function onChange() {
         dispatch("change", {
             ...template,
             props: {
+                ...template.props,
                 version
             }
         });

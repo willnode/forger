@@ -29,6 +29,8 @@ export interface RenderContext {
 export interface Widget {
     name?: string
     editor?: any | null
+    defaultProps?: Record<string, string>
+    presets?: Record<string, Template>
     imports?: string
     files?: Record<string, string>
 }

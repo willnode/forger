@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Overpass:wght@400;700&display=swap');
+
 :root {
     --nav-h: 6rem;
     --top-offset: 6rem;
@@ -61,33 +63,12 @@ body {
     --font-mono: "Fira Mono", monospace
 }
 
-@font-face {
-    font-family: Overpass;
-    font-style: normal;
-    font-weight: 300;
-    src: local("Overpass Light "),local("Overpass-Light"),url(/_app/immutable/assets/overpass-latin-300-3782c01a.woff2) format("woff2")
-}
-
-@font-face {
-    font-family: Overpass;
-    font-style: normal;
-    font-weight: 600;
-    src: local("Overpass Bold "),local("Overpass-Bold"),url(/_app/immutable/assets/overpass-latin-600-0ca25556.woff2) format("woff2")
-}
-
-@font-face {
-    font-family: Fira Mono;
-    font-style: normal;
-    font-weight: 400;
-    src: local("Fira Mono Regular "),local("Fira Mono-Regular"),url(/_app/immutable/assets/fira-mono-latin-400-8d4e0c52.woff2) format("woff2")
-}
-
 html {
-    font-size: 62.5%;
+    font-size: 80%;
     -webkit-text-size-adjust: 100%;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     box-sizing: border-box;
-    border-collapse: collapse
+    border-collapse: collapse;
 }
 
 html,body {
@@ -112,7 +93,7 @@ a:hover {
 }
 
 body {
-    font: 400 var(--h4) / var(--lh) var(--font);
+    font-family: var(--font);
     background-color: var(--back);
     color: var(--text)
 }

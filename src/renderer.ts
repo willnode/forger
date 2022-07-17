@@ -15,7 +15,7 @@ export function renderAttributes(attributes: Record<string, string>, context: Re
         if (value.startsWith("@import(") && value.endsWith(")")) {
             value = context.addImport("", value.substring(8, value.length - 1));
         }
-        if (key.startsWith('"') && key.endsWith('"'))
+        if (value.startsWith('"') && value.endsWith('"'))
             return key + "=" + value;
         else
             return key + "={" + value + "}";

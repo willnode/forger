@@ -4,15 +4,17 @@
     import type { Template } from "../../../types";
     import AddButton from "../../shared/editor/AddButton.svelte";
     import ChildEditor from "../../shared/editor/ChildEditor.svelte";
+    import Label from "../../shared/editor/Label.svelte";
 
     export let template: Template;
+    export let collapsed = false;
 
     let url = "";
     let name = "";
 
     onMount(() => {
-        url = template.props.url || '""';
-        name = template.props.name || 'data';
+        url = template.props.url || "";
+        name = template.props["let:data"] || "";
     });
 
     function onChange(e: CustomEvent<(string | Template)[]>) {
@@ -25,33 +27,44 @@
     const dispatch = createEventDispatcher();
 </script>
 
-<input
-    type="text"
-    placeholder="URL"
-    bind:value={url}
-    on:input={(e) => {
-        dispatch("change", {
-            ...template,
-            props: {
-                ...template.props,
-                url,
-            },
-        });
-    }}
-/>
+{#if !collapsed}
+<Label label="Data URL">
+    <input
+        type="text"
+        placeholder="URL"
+        bind:value={url}
+        on:input={(e) => {
+            dispatch("change", {
+                ...template,
+                props: {
+                    ...template.props,
+                    url,
+                },
+            });
+        }}
+    />
+    </Label>
+{/if}
 
-<input
-    type="text"
-    placeholder="Name var"
-    bind:value={name}
-    on:input={(e) => {
-        dispatch("change", {
-            ...template,
-            props: {
-                ...template.props,
-                "let:data": name,
-            },
-        });
-    }}
-/>
-<ChildEditor children={template.child} on:change={onChange} multiple={false} />
+<Label label="Variable Name" {collapsed}>
+    <input
+        type="text"
+        bind:value={name}
+        on:input={(e) => {
+            dispatch("change", {
+                ...template,
+                props: {
+                    ...template.props,
+                    "let:data": name,
+                },
+            });
+        }}
+    />
+</Label>
+{#if !collapsed}
+    <ChildEditor
+        children={template.child}
+        on:change={onChange}
+        multiple={false}
+    />
+{/if}

@@ -31,9 +31,10 @@
                 child: Object.entries(input).map(([path, component]) => ({
                     widget: "global.Navigation.Route",
                     props: {
-                        path,
+                        path: JSON.stringify(path),
                         component,
                     },
+                    child: [],
                 })),
             });
         }

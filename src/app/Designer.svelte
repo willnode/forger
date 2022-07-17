@@ -4,6 +4,7 @@
     import type { ReplContext } from "../types";
     import { builtinPackages, findWidget, renderWidget } from "../packages";
     import ChildEditor from "../packages/shared/editor/ChildEditor.svelte";
+import { ucfirst } from "../packages/shared/editor/utils";
     // import prettier from "prettier";
     // import * as svelteParser from "prettier-plugin-svelte";
     // import tsParser from "prettier/parser-typescript";
@@ -22,6 +23,14 @@
     var imports: Record<string, string> = {};
 
     function addImport(name: string, path: string) {
+        if (!name) {
+            var match = name.match(/([\w]+?)\.\w+$/);
+            if (match) {
+                name = ucfirst(match[1]);
+            } else {
+                name = "Component";
+            }
+        }
         var oriName = name;
         while (imports[name] && imports[name] !== path) {
             if (!nameHash[oriName]) {
@@ -47,6 +56,10 @@
         });
         var headers = Object.entries(imports)
             .map(([name, path]) => {
+                if (path.startsWith('!')) {
+                    path = path.substring(1);
+                    name = `{ ${name} }`
+                }
                 return `  import ${name} from ${JSON.stringify(path)}`;
             })
             .join("\n");
@@ -71,7 +84,7 @@
     }
 </script>
 
-<div>
+<div style="margin-right: 2rem">
     {#if selected && $selected && $selected.template}
         <ChildEditor
             children={$selected.template}
