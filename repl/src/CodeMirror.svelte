@@ -27,7 +27,7 @@
 
 		code = new_code;
 		updating_externally = true;
-		if (editor) editor.setValue(code);
+		if (editor && code !== undefined) editor.setValue(code);
 		updating_externally = false;
 	}
 

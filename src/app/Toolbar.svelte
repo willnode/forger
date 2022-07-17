@@ -6,4 +6,5 @@ export let designerMode = false;
 <div class="toolbar" style="margin-left: auto">
     <button on:click={() => dispatch('switch-designer')}>{designerMode ? 'Design' : 'Editor'}</button>
     <button on:click={() => dispatch('save')}>Save</button>
+    <button on:click={() => dispatch('export')}>Export</button>
 </div>

@@ -1,19 +1,19 @@
 <script>
-	import { setContext, createEventDispatcher } from 'svelte';
-	import { writable } from 'svelte/store';
-	import ComponentSelector from './Input/ComponentSelector.svelte';
-	import ModuleEditor from './Input/ModuleEditor.svelte';
-	import Output from './Output/index.svelte';
-	import Bundler from './Bundler.js';
-	import { is_browser } from './env.js';
+	import { setContext, createEventDispatcher } from "svelte";
+	import { writable } from "svelte/store";
+	import ComponentSelector from "./Input/ComponentSelector.svelte";
+	import ModuleEditor from "./Input/ModuleEditor.svelte";
+	import Output from "./Output/index.svelte";
+	import Bundler from "./Bundler.js";
+	import { is_browser } from "./env.js";
 
 	export let workersUrl;
-	export let packagesUrl = 'https://unpkg.com';
+	export let packagesUrl = "https://unpkg.com";
 	export let svelteUrl = `${packagesUrl}/svelte`;
 	export let embedded = false;
 	export let relaxed = false;
-	export let injectedJS = '';
-	export let injectedCSS = '';
+	export let injectedJS = "";
+	export let injectedCSS = "";
 	export let Container;
 
 	const historyMap = new Map();
@@ -21,7 +21,7 @@
 	export function toJSON() {
 		return {
 			imports: $bundle.imports,
-			components: $components
+			components: $components,
 		};
 	}
 
@@ -34,7 +34,7 @@
 		await module_editor_ready;
 		await output_ready;
 
-		injectedCSS = data.css || '';
+		injectedCSS = data.css || "";
 		await module_editor.set($selected);
 		output.set($selected, $compile_options);
 
@@ -43,13 +43,13 @@
 	}
 
 	export function markSaved() {
-		components.update(components =>
-			components.map(c => {
+		components.update((components) =>
+			components.map((c) => {
 				c.modified = false;
 				return c;
 			})
-		)
-		selected.update(c => c);
+		);
+		selected.update((c) => c);
 	}
 
 	export function update(data) {
@@ -57,10 +57,12 @@
 
 		components.set(data.components);
 
-		const matched_component = data.components.find(file => file.name === name && file.type === type);
+		const matched_component = data.components.find(
+			(file) => file.name === name && file.type === type
+		);
 		selected.set(matched_component || data.components[0]);
 
-		injectedCSS = data.css || '';
+		injectedCSS = data.css || "";
 
 		if (matched_component) {
 			module_editor.update(matched_component.source);
@@ -84,13 +86,13 @@
 	const bundle = writable(null);
 
 	const compile_options = writable({
-		generate: 'dom',
+		generate: "dom",
 		dev: false,
 		css: false,
 		hydratable: false,
 		customElement: false,
 		immutable: false,
-		legacy: false
+		legacy: false,
 	});
 
 	/**
@@ -101,20 +103,21 @@
 
 	let current_token;
 	async function rebundle() {
-		const token = current_token = {};
+		const token = (current_token = {});
 		const result = await bundler.bundle($components);
 		if (result && token === current_token) bundle.set(result);
 	}
 
 	// TODO this is a horrible kludge, written in a panic. fix it
 	let fulfil_module_editor_ready;
-	let module_editor_ready = new Promise(f => fulfil_module_editor_ready = f);
+	let module_editor_ready = new Promise(
+		(f) => (fulfil_module_editor_ready = f)
+	);
 
 	let fulfil_output_ready;
-	let output_ready = new Promise(f => fulfil_output_ready = f);
+	let output_ready = new Promise((f) => (fulfil_output_ready = f));
 
-
-	setContext('REPL', {
+	setContext("REPL", {
 		components,
 		selected,
 		bundle,
@@ -122,19 +125,21 @@
 
 		rebundle,
 
-		navigate: item => {
+		navigate: (item) => {
 			const match = /^(.+)\.(\w+)$/.exec(item.filename);
 			if (!match) return; // ???
 
 			const [, name, type] = match;
-			const component = $components.find(c => c.name === name && c.type === type);
+			const component = $components.find(
+				(c) => c.name === name && c.type === type
+			);
 			handle_select(component);
 
 			// TODO select the line/column in question
 		},
 
-		handle_change: event => {
-			selected.update(component => {
+		handle_change: (event) => {
+			selected.update((component) => {
 				// TODO this is a bit hacky — we're relying on mutability
 				// so that updating components works... might be better
 				// if a) components had unique IDs, b) we tracked selected
@@ -142,12 +147,14 @@
 				// derived from `components` and `index`
 				if (component.source != event.detail.value) {
 					component.source = event.detail.value;
+					if (event.detail.template)
+						component.template = event.detail.template;
 					component.modified = true;
 				}
 				return component;
 			});
 
-			components.update(component => {
+			components.update((component) => {
 				if (component.name === $selected.name) {
 					return $selected;
 				}
@@ -160,8 +167,8 @@
 
 			rebundle();
 
-			dispatch('change', {
-				components: $components
+			dispatch("change", {
+				components: $components,
 			});
 		},
 
@@ -177,15 +184,20 @@
 
 		request_focus() {
 			module_editor.focus();
-		}
+		},
 	});
 
 	function handle_select(component) {
-		historyMap.set(get_component_name($selected), module_editor.getHistory());
+		historyMap.set(
+			get_component_name($selected),
+			module_editor.getHistory()
+		);
 		selected.set(component);
 		module_editor.set(component);
 		if (historyMap.has(get_component_name($selected))) {
-			module_editor.setHistory(historyMap.get(get_component_name($selected)));
+			module_editor.setHistory(
+				historyMap.get(get_component_name($selected))
+			);
 		} else {
 			module_editor.clearHistory();
 		}
@@ -193,13 +205,13 @@
 	}
 
 	function get_component_name(component) {
-		return `${component.name}.${component.type}`
+		return `${component.name}.${component.type}`;
 	}
 
 	function beforeUnload(event) {
-		if ($components.find(component => component.modified)) {
+		if ($components.find((component) => component.modified)) {
 			event.preventDefault();
-			event.returnValue = '';
+			event.returnValue = "";
 		}
 	}
 
@@ -208,30 +220,43 @@
 	let runtimeErrorLoc; // TODO refactor this stuff — runtimeErrorLoc is unused
 	let status = null;
 
-	const bundler = is_browser && new Bundler({
-		workersUrl,
-		packagesUrl,
-		svelteUrl,
-		onstatus: message => {
-			status = message;
-		}
-	});
+	const bundler =
+		is_browser &&
+		new Bundler({
+			workersUrl,
+			packagesUrl,
+			svelteUrl,
+			onstatus: (message) => {
+				status = message;
+			},
+		});
 
 	$: if (output && $selected) {
 		output.update($selected, $compile_options);
 	}
 </script>
 
-<svelte:window on:beforeunload={beforeUnload}/>
+<svelte:window on:beforeunload={beforeUnload} />
 
 <svelte:component this={Container} repl={this}>
-	<section slot=selector>
-		<ComponentSelector {handle_select} on:add on:remove/>
+	<section slot="selector">
+		<ComponentSelector {handle_select} on:add on:remove />
 	</section>
-	<section slot=editor>
-		<ModuleEditor bind:this={input} errorLoc="{sourceErrorLoc || runtimeErrorLoc}"/>
+	<section slot="editor">
+		<ModuleEditor
+			bind:this={input}
+			errorLoc={sourceErrorLoc || runtimeErrorLoc}
+		/>
 	</section>
-	<section slot=output>
-		<Output {svelteUrl} {workersUrl} {status} {embedded} {relaxed} {injectedJS} {injectedCSS}/>
+	<section slot="output">
+		<Output
+			{svelteUrl}
+			{workersUrl}
+			{status}
+			{embedded}
+			{relaxed}
+			{injectedJS}
+			{injectedCSS}
+		/>
 	</section>
 </svelte:component>

@@ -1,0 +1,11 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "include": ["src/**/*", "repl/**/*"],
+    "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
+    "compilerOptions": {
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "strict": true,
+        "module": "ES2020",
+    }
+}

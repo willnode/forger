@@ -2,25 +2,18 @@
     import { createEventDispatcher, onMount } from "svelte";
 
     import type { Template } from "../../../types";
+    import ChildEditor from "../../shared/editor/ChildEditor.svelte";
 
     export let template: Template;
 
-    let version = "";
-
-    onMount(() => {
-        version = template.props.version || 'latest';
-    });
-
-    function onChange() {
+    function onChange(e:CustomEvent<(string|Template)[]>) {
         dispatch("change", {
             ...template,
-            props: {
-                version
-            }
+            child: e.detail,
         });
     }
 
     const dispatch = createEventDispatcher();
 </script>
 
-<input bind:value={version} on:input={onChange} />
+<ChildEditor children={template.child} on:change={onChange} />

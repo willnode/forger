@@ -14,6 +14,8 @@ export default ['compiler', 'bundler'].map(x => ({
 	plugins: [
 		resolve(),
 		json(),
-		!dev && terser()
+		// !dev && terser({
+		// 	sourcemap: true,
+		// })
 	]
 }));

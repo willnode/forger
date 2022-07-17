@@ -1,13 +1,15 @@
 import type { Widget } from "../../types";
 
-import BaseEditor from "./editor/Base.svelte";
-import BaseTemplate from "./Base.svelte?raw";
+import BaseEditor from "./editor/Init.svelte";
+import InitTemplate from "./Init.svelte?raw";
 
 const widgets : Record<string, Record<string, Widget>> = {
     Basic: {
-        Base: {
+        Init: {
             editor: BaseEditor,
-            render: BaseTemplate,
+            files: {
+                'Init.svelte': InitTemplate
+            },
         }
     },
 }

@@ -20,6 +20,7 @@
 							eval(script);
 							send_ok();
 						} catch (e) {
+							console.log(e);
 							send_error(e.message, e.stack);
 						}
 					}
@@ -61,10 +62,12 @@
 				window.addEventListener('message', handle_message, false);
 
 				window.onerror = function (msg, url, lineNo, columnNo, error) {
+					console.log(error);
 					parent.postMessage({ action: 'error', value: error }, '*');
 				}
 
 				window.addEventListener("unhandledrejection", event => {
+					console.log(event);
 					parent.postMessage({ action: 'unhandledrejection', value: event.reason }, '*');
 				});
 			}).call(this);

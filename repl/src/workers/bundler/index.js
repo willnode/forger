@@ -112,7 +112,7 @@ async function get_bundle(uid, mode, cache, lookup) {
 
 			// importing one Svelte runtime module from another
 			if (importer && importer.startsWith(svelteUrl)) {
-				const resolved = new URL(importee, importer).href;
+				const resolved = join(dirname(importer), importee);
 				if (resolved.endsWith('.mjs')) return resolved;
 				return is_legacy_package_structure() ?
 					`${resolved}.mjs` :
@@ -120,9 +120,15 @@ async function get_bundle(uid, mode, cache, lookup) {
 			}
 
 			// importing from another file in REPL
-			if (importee in lookup) return importee;
-			if ((importee + '.js') in lookup) return importee + '.js';
-			if ((importee + '.json') in lookup) return importee + '.json';
+			if (importee.startsWith('.')) {
+				let url = importee;
+				if (importer && importer.startsWith('.')) {
+					url = join(dirname(importer), importee);
+				}
+				if (url in lookup) return url;
+				if ((url + '.js') in lookup) return url + '.js';
+				if ((url + '.json') in lookup) return url + '.json';
+			}
 
 			// remove trailing slash
 			if (importee.endsWith('/')) importee = importee.slice(0, -1);
@@ -132,7 +138,7 @@ async function get_bundle(uid, mode, cache, lookup) {
 
 			// importing from (probably) unpkg
 			if (importee.startsWith('.')) {
-				const url = new URL(importee, importer).href;
+				const url = join(dirname(importer), importee);
 				self.postMessage({ type: 'status', uid, message: `resolving ${url}` });
 
 				return await follow_redirects(url);
@@ -307,4 +313,38 @@ async function bundle({ uid, components }) {
 			})
 		};
 	}
+}
+
+// Joins path segments.  Preserves initial "/" and resolves ".." and "."
+// Does not support using ".." to go above/outside the root.
+// This means that join("foo", "../../bar") will not resolve to "../bar"
+export function join(...paths) {
+	// Split the inputs into a list of path commands.
+	var parts = [];
+	for (var i = 0, l = paths.length; i < l; i++) {
+		parts = parts.concat(paths[i].split("/"));
+	}
+	// Interpret the path commands to get the new resolved path.
+	var newParts = [];
+	for (i = 0, l = parts.length; i < l; i++) {
+		var part = parts[i];
+		// Remove leading and trailing slashes
+		// Also remove "." segments
+		if (!part || part === ".") continue;
+		// Interpret ".." to pop the last segment
+		if (part === "..") newParts.pop();
+		// Push new path segments.
+		else newParts.push(part);
+	}
+	// Preserve the initial slash if there was one.
+	if (parts[0] === "") newParts.unshift("");
+	if (parts[0] === ".") newParts.unshift(".");
+	// Turn back into a single string path.
+	return newParts.join("/") || (newParts.length ? "/" : ".");
+}
+
+// A simple function to get the dirname of a path
+// Trailing slashes are ignored. Leading slash is preserved.
+export function dirname(path) {
+	return join(path, "..");
 }

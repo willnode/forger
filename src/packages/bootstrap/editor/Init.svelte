@@ -5,25 +5,22 @@
 
     export let template: Template;
 
-    let textInput = "";
+    let version = "";
 
     onMount(() => {
-        console.log(template);
-        if (template.child && template.child.length > 0 && typeof template.child[0] == 'string') {
-            textInput = template.child[0];
-        } else {
-            textInput = '';
-        }
+        version = template.props.version || '"latest"';
     });
 
     function onChange() {
         dispatch("change", {
             ...template,
-            child: [textInput]
+            props: {
+                version
+            }
         });
     }
 
     const dispatch = createEventDispatcher();
 </script>
 
-<textarea bind:value={textInput} on:input={onChange} />
+<input bind:value={version} on:input={onChange} />

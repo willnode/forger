@@ -1,28 +1,34 @@
+import type { Writable } from "svelte/store";
+
 export interface Component {
-    type: "svelte"|"js"|"json"
+    type: string
     name: string
     source: string
-    template: Template
+    template: (string|Template)[]
+}
+
+export interface ReplContext {
+   components: Writable<Component[]>
+   selected: Writable<Component>
+   handle_change: (e: {detail:{value: string, template: (string|Template)[]}}) => void
 }
 
 export interface Template {
     widget: string
     props: Record<string, string>
-    child: null|string[]|Template[]
+    child: (string|Template)[]
 }
 
 export type PackageList = Record<string, Record<string, Record<string, Widget>>>
 
 export interface RenderContext {
     packages: PackageList
-    imports: Record<string, string>
-    contents: Record<string, string>
-
     addImport: (name: string, path: string, content?: string) => string
 }
 
 export interface Widget {
-    render?: string
+    name?: string
     editor?: any | null
     imports?: string
+    files?: Record<string, string>
 }
