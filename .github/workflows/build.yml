@@ -13,7 +13,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-        run: 
       - name: Install and build REPL workers
         run: cd repl && yarn install --frozen-lockfile && yarn build && cd ..
       - name: Install and build web
