@@ -1,0 +1,25 @@
+name: Build CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+        run: 
+      - name: Install and build REPL workers
+        run: cd repl && yarn install --frozen-lockfile && yarn build && cd ..
+      - name: Install and build web
+        run: yarn install --frozen-lockfile && yarn build
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: ./dist
