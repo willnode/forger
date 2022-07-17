@@ -16,7 +16,7 @@ jobs:
       - name: Install and build REPL workers
         run: cd repl && yarn install --frozen-lockfile && yarn build && cd ..
       - name: Install and build web
-        run: yarn install --frozen-lockfile && yarn build
+        run: yarn install --frozen-lockfile && yarn build --base=/forger/
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
