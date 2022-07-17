@@ -5463,7 +5463,7 @@
 
 				// importing one Svelte runtime module from another
 				if (importer && importer.startsWith(svelteUrl)) {
-					const resolved = join(dirname(importer), importee);
+					const resolved = new URL(importee, importer).href;
 					if (resolved.endsWith('.mjs')) return resolved;
 					return is_legacy_package_structure() ?
 						`${resolved}.mjs` :
@@ -5489,7 +5489,7 @@
 
 				// importing from (probably) unpkg
 				if (importee.startsWith('.')) {
-					const url = join(dirname(importer), importee);
+					const url = new URL(importee, importer).href;
 					self.postMessage({ type: 'status', uid, message: `resolving ${url}` });
 
 					return await follow_redirects(url);
