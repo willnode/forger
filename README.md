@@ -2,6 +2,8 @@
 
 This project is in early developments (like reallyyy early: 5% to finish), stay tuned!
 
+[You can try now anyway](https://willnode.github.io/forger)
+
 ## What
 
 This is an online website builder where it generates an SPA project based on Svelte. No server-side, 100% fully works in browser. 
