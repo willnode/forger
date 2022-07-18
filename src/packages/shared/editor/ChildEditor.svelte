@@ -15,15 +15,6 @@
 </script>
 
 <div class="card">
-    {#if multiple}
-        <AddButton
-            on:click={(e) => {
-                children.unshift("Text here");
-                collapseData.unshift(false);
-                dispatch("change", [...children]);
-            }}
-        />
-    {/if}
     {#each children as child, i}
         <div class="card-item">
             <button
@@ -78,7 +69,7 @@
 <style>
     .card {
         margin: 0.3rem;
-        margin-right: -1.1rem;
+        margin-right: -1rem;
         padding: 0.2rem;
         border: 1px solid #cccc;
     }
@@ -90,6 +81,7 @@
 
     .card-main {
         flex: 1;
+        min-width: 0;
         margin-left: 0.3em;
         display: flex;
         flex-direction: column;
