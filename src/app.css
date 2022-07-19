@@ -4,3 +4,6 @@
     display: none
 }
 
+body {
+    --font-mono: 'Fira Mono', monospace;
+}

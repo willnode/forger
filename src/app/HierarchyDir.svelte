@@ -4,9 +4,14 @@
     import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from "svelte-dnd-action";
     import type { ReplContext, Template, Widget } from "../types";
     import { createEventDispatcher, getContext } from "svelte";
-    import { Add, ChevronDown, ChevronRight, TrashCan } from "carbon-icons-svelte";
+    import {
+        Add,
+        ChevronDown,
+        ChevronRight,
+        TrashCan,
+    } from "carbon-icons-svelte";
     import { builtinPackages, findWidget } from "../packages";
-import { divDisplayName } from "../packages/shared/editor/utils";
+    import { divDisplayName } from "../packages/shared/editor/utils";
     const dispatch = createEventDispatcher();
 
     const { selected }: ReplContext = getContext("REPL");
@@ -16,7 +21,7 @@ import { divDisplayName } from "../packages/shared/editor/utils";
     let widget = findWidget("", builtinPackages);
     let expanded = true;
     $: {
-        widget = findWidget(node.widget, builtinPackages);
+        widget = node && findWidget(node.widget, builtinPackages);
     }
     const flipDurationMs = 300;
     function handleDndConsider(e: any) {
@@ -67,35 +72,39 @@ import { divDisplayName } from "../packages/shared/editor/utils";
     }
 </script>
 
-<div class="child">
-    <Button
-        kind={selectedId == node.id ? "primary" : "ghost"}
-        size="small"
-        as
-        let:props
-    >
-        <div class:btn={true} {...props} on:click={handleClick}>
-            <div class="icon">
-                {#if expanded}
-                    <ChevronDown />
-                {:else}
-                    <ChevronRight />
-                {/if}
+{#if node}
+    <div class="child">
+        <Button
+            kind={selectedId == node.id ? "primary" : "ghost"}
+            size="small"
+            as
+            let:props
+        >
+            <div class:btn={true} {...props} on:click={handleClick}>
+                <div class="icon">
+                    {#if expanded}
+                        <ChevronDown />
+                    {:else}
+                        <ChevronRight />
+                    {/if}
+                </div>
+                <div class="text">
+                    {widget
+                        ? (divDisplayName(node.props) || widget.category) +
+                          " - " +
+                          widget.name
+                        : "Text"}
+                </div>
             </div>
-            <div class="text">
-                {widget ? ((divDisplayName(node.props) || widget.category) + " - " + widget.name) : "Text"}
+        </Button>
+        <Button kind={"danger-ghost"} size="small" as let:props>
+            <div class:del={true} {...props} on:click={handleDelete}>
+                <TrashCan />
             </div>
-        </div>
-    </Button>
-    <Button kind={"danger-ghost"} size="small" as let:props>
-        <div class:del={true} {...props} on:click={handleDelete}>
-            <TrashCan />
-        </div>
-    </Button>
-</div>
+        </Button>
+    </div>
 
-{#if expanded}
-    <div class="h-items">
+    {#if expanded}
         <section
             use:dndzone={{
                 items: node.items,
@@ -115,17 +124,19 @@ import { divDisplayName } from "../packages/shared/editor/utils";
             {/each}
         </section>
         {#if selectedId == node.id && widget && (widget?.child == null || (widget?.child == "single" && node.items.length < 1))}
-            <Button on:click={handleAdd} kind="secondary" size="small"
-            icon={Add} iconDescription="Add child" tooltipPosition="right" />
+            <Button
+                on:click={handleAdd}
+                kind="secondary"
+                size="small"
+                icon={Add}
+                iconDescription="Add child"
+                tooltipPosition="right"
+            />
         {/if}
-    </div>
+    {/if}
 {/if}
 
 <style>
-    .h-items {
-        padding-left: 1em;
-        margin-bottom: 0.5em;
-    }
     section {
         width: auto;
         border: 0px solid black;

@@ -10,13 +10,14 @@
     import Hierarchy from "./Hierarchy.svelte";
     import Files from "./Files.svelte";
     import { builtinPackages, renderWidget } from "../packages";
-import { ucfirst } from "../packages/shared/editor/utils";
+    import { ucfirst } from "../packages/shared/editor/utils";
     let designerMode = true;
     let showHierarchy = true;
     let showFiles = true;
     let selectedId = "1";
 
-    const { selected, navigate, handle_change }: ReplContext = getContext("REPL");
+    const { selected, navigate, handle_change }: ReplContext =
+        getContext("REPL");
 
     function onSave() {
         $repl.markSaved();
@@ -131,25 +132,36 @@ import { ucfirst } from "../packages/shared/editor/utils";
             </div>
             <div class="worksheet">
                 <section id="files" class:hidden={!showFiles}>
-                    <Files />
+                    <Files
+                        on:selected={() => {
+                            setTimeout(onSwitchDesigner, 1);
+                        }}
+                    />
                 </section>
-                <section
-                    id="hierarchy"
-                    class:hidden={!showHierarchy || !designerMode}
-                >
-                    <Hierarchy bind:selectedId on:change={onChange}/>
-                </section>
-                <section id="editor" class:hidden={designerMode}>
-                    <slot name="editor" />
-                </section>
-                <section id="designer" class:hidden={!designerMode}>
-                    {#if $selected}
-                        <Designer bind:selectedId on:change={onChange} />
+                {#if $selected}
+                    {#if !!$selected.template && $selected.template["1"]}
+                        <section
+                            id="hierarchy"
+                            class:hidden={!showHierarchy || !designerMode}
+                        >
+                            <Hierarchy bind:selectedId on:change={onChange} />
+                        </section>
+                        <section id="designer" class:hidden={!designerMode}>
+                            {#if $selected}
+                                <Designer
+                                    bind:selectedId
+                                    on:change={onChange}
+                                />
+                            {/if}
+                        </section>
                     {/if}
-                </section>
+                    <section id="editor" class:hidden={(!!$selected.template && $selected.template["1"] && designerMode)}>
+                        <slot name="editor" />
+                    </section>
+                {/if}
             </div>
         </section>
-        <section class="output" slot="b" style="height: 100%;">
+        <section class="output" slot="b" style="height: 100%; color: black;">
             <slot name="output" />
         </section>
     </SplitPane>

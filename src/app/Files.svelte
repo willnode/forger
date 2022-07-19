@@ -1,13 +1,11 @@
 <script>
     import {
         Button,
-        SideNav,
         SideNavItems,
         SideNavLink,
         TextInput,
     } from "carbon-components-svelte";
     import { Add, TrashCan } from "carbon-icons-svelte";
-    import { ButtonSet } from "carbon-components-svelte";
     import { getContext, createEventDispatcher } from "svelte";
 
     const { components, selected, handle_select, request_focus, rebundle } =
@@ -20,6 +18,7 @@
         if ($selected !== component) {
             editing = null;
             handle_select(component);
+            dispatch("selected");
         }
     }
 
