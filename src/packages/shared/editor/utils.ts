@@ -1,7 +1,7 @@
 // Joins path segments.  Preserves initial "/" and resolves ".." and "."
 // Does not support using ".." to go above/outside the root.
 
-import type { Template } from "../../../types";
+import type { Preset, Template } from "../../../types";
 
 // This means that join("foo", "../../bar") will not resolve to "../bar"
 export function join(...paths: string[]) {
@@ -38,12 +38,38 @@ export function ucfirst(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export function h(widget: string, props: any, ...child: any[]): Template {
+export function divDisplayName(props: Record<string, string>) {
+  var name = ""
+  if (props.class && props.class.startsWith('"') && props.class.endsWith('"')) {
+    name += "." + props.class.substring(1, props.class.length - 1).replace(/\s+/g, ".")
+  }
+  if (props.id && props.id.startsWith('"') && props.id.endsWith('"')) {
+    name += "#" + props.id.substring(1, props.id.length - 1)
+  }
+  return name;
+}
+
+export function h(element: string, props: Record<string, string>, ...children: (string | Preset)[]): Preset {
   // add all value props a double quote
   Object.keys(props).forEach(key => {
     if (typeof props[key] === "string") {
       props[key] = JSON.stringify(props[key]);
     }
   });
-  return { widget, props, child };
+  // set all text to proper children
+  return {
+    element, props, children: children.map((child: (string | Preset)) => {
+      if (typeof child === "string") {
+        return {
+          children: [],
+          element: "",
+          props: {
+            text: child,
+          },
+        };
+      } else {
+        return child;
+      }
+    })
+  };
 }

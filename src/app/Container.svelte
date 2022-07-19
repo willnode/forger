@@ -7,15 +7,31 @@
     import Designer from "./Designer.svelte";
     import Toolbar from "./Toolbar.svelte";
     import { setupProjectFiles } from "../renderer";
-    let designer = true;
+    import Hierarchy from "./Hierarchy.svelte";
+    import Files from "./Files.svelte";
+    import { builtinPackages, renderWidget } from "../packages";
+import { ucfirst } from "../packages/shared/editor/utils";
+    let designerMode = true;
+    let showHierarchy = true;
+    let showFiles = true;
+    let selectedId = "1";
 
-    const { selected, navigate }: ReplContext = getContext("REPL");
+    const { selected, navigate, handle_change }: ReplContext = getContext("REPL");
 
     function onSave() {
         $repl.markSaved();
         window.sessionStorage.project = JSON.stringify(
             $repl.toJSON().components
         );
+    }
+
+    function onSwitchDesigner() {
+        if ($selected) {
+            // refresh editor
+            navigate({
+                filename: `${$selected.name}.${$selected.type}`,
+            });
+        }
     }
 
     async function onExport() {
@@ -34,37 +50,101 @@
         link.click();
         link.remove();
     }
+
+    var nameHash: Record<string, number> = {};
+    var imports: Record<string, string> = {};
+
+    function addImport(name: string, path: string) {
+        if (!name) {
+            var match = name.match(/([\w]+?)\.\w+$/);
+            if (match) {
+                name = ucfirst(match[1]);
+            } else {
+                name = "Component";
+            }
+        }
+        var oriName = name;
+        while (imports[name] && imports[name] !== path) {
+            if (!nameHash[oriName]) {
+                nameHash[oriName] = 1;
+            } else {
+                nameHash[oriName]++;
+            }
+            name = `${oriName}_${nameHash[name]}`;
+        }
+        if (!imports[name]) {
+            imports[name] = path;
+            return name;
+        }
+        return name;
+    }
+
+    function onChange(e: CustomEvent) {
+        nameHash = {};
+        imports = {};
+        var html = renderWidget($selected.template, "1", {
+            addImport,
+            packages: builtinPackages,
+        });
+        var headers = Object.entries(imports)
+            .map(([name, path]) => {
+                if (path.startsWith("!")) {
+                    path = path.substring(1);
+                    name = `{ ${name} }`;
+                }
+                return `  import ${name} from ${JSON.stringify(path)}`;
+            })
+            .join("\n");
+        if (headers) {
+            html = `<script>\n${headers}\n<\/script>\n${html}`;
+        }
+        // html = prettier.format(html, {
+        //     parser: "svelte",
+        //     pluginSearchDirs: ["."],
+        //     plugins: [tsParser, cssParser, htmlParser, svelteParser],
+        //     svelteStrictMode: true,
+        //     svelteBracketNewLine: false,
+        //     svelteAllowShorthand: false,
+        //     svelteIndentScriptAndStyle: false,
+        // });
+        handle_change({
+            detail: {
+                value: html,
+                template: $selected.template,
+            },
+        });
+    }
 </script>
 
 <div class="container">
     <SplitPane type="horizontal" pos={50}>
         <section class="workpanel" slot="a">
-            <div class="selector">
-                <slot name="selector" />
-            </div>
             <div class="toolbar">
                 <Toolbar
-                    designerMode={designer}
-                    on:switch-designer={() => {
-                        if (designer && $selected) {
-                            // refresh editor
-                            navigate({
-                                filename: `${$selected.name}.${$selected.type}`,
-                            });
-                        }
-                        designer = !designer;
-                    }}
+                    bind:designerMode
+                    bind:showHierarchy
+                    bind:showFiles
+                    on:switchDesigner={onSwitchDesigner}
                     on:save={onSave}
                     on:export={onExport}
                 />
             </div>
             <div class="worksheet">
-                <section class:hidden={designer}>
+                <section id="files" class:hidden={!showFiles}>
+                    <Files />
+                </section>
+                <section
+                    id="hierarchy"
+                    class:hidden={!showHierarchy || !designerMode}
+                >
+                    <Hierarchy bind:selectedId on:change={onChange}/>
+                </section>
+                <section id="editor" class:hidden={designerMode}>
                     <slot name="editor" />
                 </section>
-                <section class:hidden={!designer}>
+                <section id="designer" class:hidden={!designerMode}>
                     {#if $selected}
-                        <Designer />
+                        <Designer bind:selectedId on:change={onChange} />
                     {/if}
                 </section>
             </div>
@@ -78,6 +158,7 @@
 <style>
     .container {
         position: relative;
+        display: flex;
         width: 100%;
         height: 100%;
     }
@@ -93,13 +174,21 @@
         flex-direction: row;
         height: 100%;
     }
+    .worksheet > section {
+        flex: 1;
+        min-width: 0;
+    }
+    #files {
+        min-width: auto;
+        width: 200px;
+        max-width: 20vw;
+        flex: 0;
+    }
     .worksheet,
     .worksheet :global(section),
     .worksheet :global(.editor-wrapper),
-    .selector :global(.component-selector),
     .output :global(section),
-    .output :global(section)>:global(*:last-child)
-    {
+    .output :global(section) > :global(*:last-child) {
         width: 100%;
         height: 100%;
     }

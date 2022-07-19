@@ -1,7 +1,6 @@
 <script>
 	import { setContext, createEventDispatcher } from "svelte";
 	import { writable } from "svelte/store";
-	import ComponentSelector from "./Input/ComponentSelector.svelte";
 	import ModuleEditor from "./Input/ModuleEditor.svelte";
 	import Output from "./Output/index.svelte";
 	import Bundler from "./Bundler.js";
@@ -122,9 +121,9 @@
 		selected,
 		bundle,
 		compile_options,
-
+		
 		rebundle,
-
+		handle_select,
 		navigate: (item) => {
 			const match = /^(.+)\.(\w+)$/.exec(item.filename);
 			if (!match) return; // ???
@@ -239,9 +238,6 @@
 <svelte:window on:beforeunload={beforeUnload} />
 
 <svelte:component this={Container} repl={this}>
-	<section slot="selector">
-		<ComponentSelector {handle_select} on:add on:remove />
-	</section>
 	<section slot="editor">
 		<ModuleEditor
 			bind:this={input}

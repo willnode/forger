@@ -1,13 +1,17 @@
 import type { Widget } from "../../types";
-import DivEditor from "../global/editor/Div.svelte";
 import { h } from "../shared/editor/utils";
-import BaseEditor from "./editor/Init.svelte";
 import InitTemplate from "./Init.svelte?raw";
 
 const widgets: Record<string, Record<string, Widget>> = {
-    Basic: {
+    Bootstrap: {
         Init: {
-            editor: BaseEditor,
+            child: "none",
+            props: ["version"],
+            default: {
+                props: {
+                    version: '"latest"',
+                }
+            },
             files: {
                 'Init.svelte': InitTemplate
             },
@@ -15,10 +19,12 @@ const widgets: Record<string, Record<string, Widget>> = {
     },
     Content: {
         Card: {
-            editor: DivEditor,
             name: 'div',
-            defaultProps: {
-                class: '"card"'
+            props: ["class"],
+            default: {
+                props: {
+                    class: '"card"'
+                }
             },
             presets: {
                 CardGroup: h('bootstrap.Content.Card', { class: "card" },
@@ -48,10 +54,12 @@ const widgets: Record<string, Record<string, Widget>> = {
     },
     Layout: {
         Container: {
-            editor: DivEditor,
             name: 'div',
-            defaultProps: {
-                class: '"container"'
+            props: ["class"],
+            default: {
+                props: {
+                    class: '"container"'
+                }
             },
             presets: {
                 ContainerAndRow: h('bootstrap.Layout.Container', {

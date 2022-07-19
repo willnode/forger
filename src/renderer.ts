@@ -17,7 +17,7 @@ export function renderAttributes(attributes: Record<string, string>, context: Re
         }
         if (value.startsWith('"') && value.endsWith('"'))
             return key + "=" + value;
-        else
+        else if (value)
             return key + "={" + value + "}";
     }).join(' ');
 }
