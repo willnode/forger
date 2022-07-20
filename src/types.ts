@@ -53,10 +53,18 @@ export interface Widget {
     name?: string
     display?: (props: string[]) => string
     editor?: any | null
-    props?: string[]
+    props?: (string | WidgetProp)[]
     default?: Partial<Template>
     presets?: Record<string, Preset>
     imports?: string
     files?: Record<string, string>
     child?: undefined | "single" | "none"
+}
+
+export interface WidgetProp {
+    type: "text" | "textarea" | "select" | "prop-select" | "prop"
+    options?: string[],
+    name: string,
+    label?: string,
+    persistent?: boolean,
 }

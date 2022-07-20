@@ -101,7 +101,7 @@
 				let i = styles.length;
 				while (i--) styles[i].parentNode.removeChild(styles[i]);
 
-				if (window.component) {
+				if (window.component && window.component.$destroy) {
 					try {
 						window.component.$destroy();
 					} catch (err) {

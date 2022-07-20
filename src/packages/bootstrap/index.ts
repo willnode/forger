@@ -3,69 +3,64 @@ import { h } from "../shared/editor/utils";
 import InitTemplate from "./Init.svelte?raw";
 
 const widgets: Record<string, Record<string, Widget>> = {
-    Bootstrap: {
-        Init: {
-            child: "none",
-            props: [],
-            files: {
-                'Init.svelte': InitTemplate
-            },
+    Layout: {
+        Container: {
+            imports: "!sveltestrap",
+            props: [{
+                type: "prop-select",
+                name: "size",
+                options: ["", '"fluid"', '"sm"', '"md"', '"lg"', '"xl"', '"xxl"'],
+            }]
+        },
+        Row: {
+            imports: "!sveltestrap",
+            props: [{
+                type: "prop",
+                name: "noGutters",
+            }, {
+                type: "select",
+                name: "cols",
+                options: ["", "1", "2", "3", "4", "6", "12"],
+            }]
+        },
+        Col: {
+            imports: "!sveltestrap",
+            props: [{
+                type: "select",
+                name: "xs",
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
+            }, {
+                type: "select",
+                name: "md",
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
+            }, {
+                type: "select",
+                name: "lg",
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
+            }]
         }
     },
     Content: {
         Card: {
-            name: 'div',
-            props: ["class"],
-            default: {
-                props: {
-                    class: '"card"'
-                }
-            },
-            presets: {
-                CardGroup: h('bootstrap.Content.Card', { class: "card" },
-                    h('global.Content.Img', {
-                        src: 'https://via.placeholder.com/300x200',
-                        alt: ' ',
-                        width: '100%',
-                        class: 'card-img-top',
-                    }),
-                    h('global.Content.Div', {
-                        class: 'card-body',
-                    }, h('global.Content.Div', {
-                        class: 'card-title',
-                    }, 'Card title'), h('global.Content.Div', {
-                        class: 'card-text',
-                    }, 'Some quick example text to build on the card title and make up the bulk of the card\'s content.')),
-                    h('global.Content.Div', {
-                        class: 'card-footer',
-                    }, h('global.Content.Div', {
-                        class: 'card-link',
-                    }, 'Card link'), h('global.Content.Div', {
-                        class: 'card-link',
-                    }, 'Another link'))
-                ),
-            }
-        }
-    },
-    Layout: {
-        Container: {
-            name: 'div',
-            props: ["class"],
-            default: {
-                props: {
-                    class: '"container"'
-                }
-            },
-            presets: {
-                ContainerAndRow: h('bootstrap.Layout.Container', {
-                    class: 'container',
-                },
-                    h('global.Content.Div', {
-                        class: 'row',
-                    }, h('global.Content.Div', {
-                        class: 'col-md-4',
-                    }))),
-            }
+            imports: "!sveltestrap",
+            props: [{
+                type: "prop",
+                name: "body",
+            }, {
+                type: "prop",
+                name: "inverse",
+            }, {
+                type: "select",
+                name: "color",
+                options: ["", "primary", "secondary", "success", "danger", "warning", "info", "light", "dark"],
+            }, {
+                type: "text",
+                name: "class",
+            }]
+        },
+        CardBody: {
+            imports: "!sveltestrap",
+
         }
     }
 }

@@ -16,15 +16,25 @@
 
     import { createEventDispatcher, getContext } from "svelte";
     import { builtinPackages, findWidget } from "../packages";
-    import type { Preset, ReplContext, Template, Widget } from "../types";
+    import type {
+        Preset,
+        ReplContext,
+        Template,
+        Widget,
+        WidgetProp,
+    } from "../types";
     import { join, ucfirst } from "../packages/shared/editor/utils";
     import WidgetSelector from "./WidgetSelector.svelte";
     import {
+Checkbox,
         OverflowMenu,
         OverflowMenuItem,
+        Select,
+        SelectItem,
         TextArea,
         TextInput,
     } from "carbon-components-svelte";
+    import { prop_dev } from "svelte/internal";
     const dispatch = createEventDispatcher();
 
     function handleEditorChange() {
@@ -33,6 +43,9 @@
 
     function handlePresetSet(preset: Preset) {
         const addFunc = (p: Preset) => {
+            if (!$selected.options.freeId) {
+                $selected.options.freeId = 0;
+            }
             const id = ($selected.options.freeId++).toString();
             $selected.template[id] = {
                 id,
@@ -45,6 +58,19 @@
         template.props = { ...preset.props };
         template.items = preset.children.map((x) => addFunc(x));
         console.log(template);
+        handleEditorChange();
+    }
+
+    function handlePropChange(prop: WidgetProp, val: any) {
+        if (prop && (prop.type == "prop-select" || prop.type == "select")) {
+            if (val) {
+                template.props[prop.name] = val;
+            } else {
+                delete template.props[prop.name];
+            }
+        }
+        if (val || prop.persistent) template.props[prop.name] = val + "";
+        else delete template.props[prop.name];
         handleEditorChange();
     }
 </script>
@@ -63,50 +89,50 @@
     </OverflowMenu>
 {/if}
 {#key template.id}
-<WidgetSelector
-    bind:value={template.widget}
-    on:change={(e) => {
-        if (e.detail) {
-            const widget = findWidget(e.detail, builtinPackages);
-            if (widget) {
-                Object.assign(template, {
-                    widget: e.detail,
-                    props: { ...(widget.default?.props || {}) },
-                });
+    <WidgetSelector
+        bind:value={template.widget}
+        on:change={(e) => {
+            if (e.detail) {
+                const widget = findWidget(e.detail, builtinPackages);
+                if (widget) {
+                    Object.assign(template, {
+                        widget: e.detail,
+                        props: { ...(widget.default?.props || {}) },
+                    });
+                }
+                // add to components
+                if (widget && widget.files) {
+                    Object.entries(widget.files).forEach(([name, file]) => {
+                        const [nameWithoutExt, ext] = name.split(".", 2);
+                        var path = join(
+                            `packages/${widget.package}/`,
+                            nameWithoutExt
+                        );
+                        const component = $components.find(
+                            (c) => c.name === path && c.type === ext
+                        );
+                        if (!component) {
+                            $components.push({
+                                name: path,
+                                type: ext,
+                                source: file,
+                                template: {},
+                                modified: true,
+                                options: {
+                                    freeId: 1,
+                                },
+                            });
+                        } else {
+                            component.source = file;
+                        }
+                    });
+                }
+            } else {
+                widget = null;
             }
-            // add to components
-            if (widget && widget.files) {
-                Object.entries(widget.files).forEach(([name, file]) => {
-                    const [nameWithoutExt, ext] = name.split(".", 2);
-                    var path = join(
-                        `packages/${widget.package}/`,
-                        nameWithoutExt
-                    );
-                    const component = $components.find(
-                        (c) => c.name === path && c.type === ext
-                    );
-                    if (!component) {
-                        $components.push({
-                            name: path,
-                            type: ext,
-                            source: file,
-                            template: {},
-                            modified: true,
-                            options: {
-                                freeId: 1,
-                            },
-                        });
-                    } else {
-                        component.source = file;
-                    }
-                });
-            }
-        } else {
-            widget = null;
-        }
-        handleEditorChange();
-    }}
-/>
+            handleEditorChange();
+        }}
+    />
 {/key}
 
 {#if widget}
@@ -114,15 +140,58 @@
         {#if widget.props}
             <div class="props">
                 {#each widget.props as prop}
-                    <TextInput
-                        value={template.props[prop]}
-                        labelText={ucfirst(prop)}
-                        on:input={(e) => {
-                            template.props[prop] = e.detail + "";
-                            console.log(prop + " :::: " + template.props[prop])
-                            handleEditorChange();
-                        }}
-                    />
+                    {#if typeof prop === "string"}
+                        <TextInput
+                            value={template.props[prop]}
+                            labelText={ucfirst(prop)}
+                            on:input={(e) => {
+                                if (e.detail)
+                                    template.props[prop] = e.detail + "";
+                                else delete template.props[prop];
+                                console.log(
+                                    prop + " :::: " + template.props[prop]
+                                );
+                                handleEditorChange();
+                            }}
+                        />
+                    {:else if prop.type == "text"}
+                        <TextInput
+                            value={template.props[prop.name]}
+                            labelText={prop.label || ucfirst(prop.name)}
+                            on:input={(e) => handlePropChange(prop, e.detail)}
+                        />
+                    {:else if prop.type == "textarea"}
+                        <TextArea
+                            value={template.props[prop.name]}
+                            labelText={prop.label || ucfirst(prop.name)}
+                            on:input={(e) =>
+                                // @ts-ignore
+                                handlePropChange(prop, e.currentTarget.value)}
+                        />
+                    {:else if prop.type == "prop"}
+                        <Checkbox
+                            checked={!!template.props[prop.name]}
+                            labelText={prop.label || ucfirst(prop.name)}
+                            on:check={(e) =>
+                                // @ts-ignore
+                                handlePropChange(prop, e.detail)}
+                        />
+                    {:else if (prop.type == "select" || prop.type == "prop-select") && prop.options}
+                        <Select
+                            selected={template.props[prop.name]}
+                            labelText={prop.label || ucfirst(prop.name)}
+                            on:change={(e) =>
+                                // @ts-ignore
+                                handlePropChange(prop, e.detail)}
+                        >
+                            {#each prop.options as option}
+                                <SelectItem
+                                    value={option}
+                                    text={ucfirst(option)}
+                                />
+                            {/each}
+                        </Select>
+                    {/if}
                 {/each}
             </div>
         {:else if widget.editor}

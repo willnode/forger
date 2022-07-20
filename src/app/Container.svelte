@@ -28,6 +28,7 @@
             p.files = json.components;
             p.options.imports = json.imports;
             window.sessionStorage.project = JSON.stringify(p);
+            console.log("saved");
             return p;
         });
     }
