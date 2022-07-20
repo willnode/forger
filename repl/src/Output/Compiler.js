@@ -38,7 +38,7 @@ export default class Compiler {
 					name: component.name,
 					filename: `${component.name}.svelte`
 				}, options),
-				entry: component.name === 'App'
+				entry: component.name === 'main'
 			});
 		});
 	}

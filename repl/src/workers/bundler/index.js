@@ -220,7 +220,7 @@ async function get_bundle(uid, mode, cache, lookup) {
 
 	try {
 		bundle = await rollup.rollup({
-			input: './App.svelte',
+			input: './main.js',
 			plugins: [
 				repl_plugin,
 				commonjs,
@@ -268,35 +268,15 @@ async function bundle({ uid, components }) {
 
 		const dom_result = (await dom.bundle.generate({
 			format: 'iife',
-			name: 'SvelteComponent',
+			name: 'main',
 			exports: 'named',
 			sourcemap: true
 		})).output[0];
 
-		const ssr = false // TODO how can we do SSR?
-			? await get_bundle(uid, 'ssr', cached.ssr, lookup)
-			: null;
-
-		if (ssr) {
-			cached.ssr = ssr.cache;
-			if (ssr.error) {
-				throw ssr.error;
-			}
-		}
-
-		const ssr_result = ssr
-			? (await ssr.bundle.generate({
-				format: 'iife',
-				name: 'SvelteComponent',
-				exports: 'named',
-				sourcemap: true
-			})).output[0]
-			: null;
-
 		return {
 			uid,
 			dom: dom_result,
-			ssr: ssr_result,
+			ssr: null,
 			imports: dom.imports,
 			warnings: dom.warnings,
 			error: null

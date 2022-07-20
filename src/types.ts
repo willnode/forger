@@ -1,11 +1,19 @@
 import type { Writable } from "svelte/store";
 
+export interface Project {
+    files: Component[],
+    options: {
+        name: string,
+        packages: string[],
+        imports: string[],
+    }
+}
 export interface Component {
     type: string
     name: string
     source: string
     template: Record<string, Template>
-    options: ComponentOptions
+    options: Partial<ComponentOptions>
     modified: boolean
 }
 

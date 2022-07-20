@@ -19,11 +19,17 @@
     const { selected, navigate, handle_change }: ReplContext =
         getContext("REPL");
 
+    const { project } = getContext("APP");
+
     function onSave() {
         $repl.markSaved();
-        window.sessionStorage.project = JSON.stringify(
-            $repl.toJSON().components
-        );
+        project.update((p: any) => {
+            var json = $repl.toJSON();
+            p.files = json.components;
+            p.options.imports = json.imports;
+            window.sessionStorage.project = JSON.stringify(p);
+            return p;
+        });
     }
 
     function onSwitchDesigner() {

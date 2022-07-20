@@ -98,8 +98,6 @@
 
 				const styles = document.querySelectorAll('style[id^=svelte-]');
 
-				${$bundle.dom.code}
-
 				let i = styles.length;
 				while (i--) styles[i].parentNode.removeChild(styles[i]);
 
@@ -111,13 +109,14 @@
 					}
 				}
 
-				document.body.innerHTML = '';
+				document.head.innerHTML = '';
+				document.body.innerHTML = '<div id="app"></app>';
 				window.location.hash = '';
 				window._svelteTransitionManager = null;
 
-				window.component = new SvelteComponent.default({
-					target: document.body
-				});
+				${$bundle.dom.code}
+
+				window.component = main;
 			`);
 
 			error = null;

@@ -5,7 +5,13 @@ export default {
         if (!id.endsWith('.css')) return;
         
         return {
-            code: `export default ${JSON.stringify(code)};`,
+            code: `
+var code = ${JSON.stringify(code)};
+var style = document.createElement('style');
+style.type = 'text/css';
+style.appendChild(document.createTextNode(code));
+document.head.appendChild(style);
+export default code;`,
             map: null
         };
     },
