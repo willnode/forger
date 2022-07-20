@@ -6,12 +6,7 @@ const widgets: Record<string, Record<string, Widget>> = {
     Bootstrap: {
         Init: {
             child: "none",
-            props: ["version"],
-            default: {
-                props: {
-                    version: '"latest"',
-                }
-            },
+            props: [],
             files: {
                 'Init.svelte': InitTemplate
             },

@@ -1,3 +1,5 @@
+import path from 'path';
+
 self.window = self; // egregious hack to get magic-string to work in a worker
 
 let fulfil_ready;
@@ -26,6 +28,7 @@ const common_options = {
 
 function compile({ id, source, options }) {
 	try {
+		options.name = path.basename(options.name, path.extname(options.name));
 		const { js, css } = svelte.compile(
 			source,
 			Object.assign({}, common_options, options)

@@ -93,7 +93,7 @@
             source: "",
             modified: true,
             options: {
-                "freeId": 2,
+                freeId: 2,
             },
             template: {
                 "1": {
@@ -185,11 +185,7 @@
                 on:drop={dragEnd}
             >
                 <i class="drag-handle" />
-                {#if component.name === "App" && component !== editing}
-                    <SideNavLink isSelected={component === $selected}>
-                        App.svelte{#if component.modified}*{/if}
-                    </SideNavLink>
-                {:else if component === editing}
+                {#if component === editing}
                     <SideNavLink class="input-sizer">
                         <!-- svelte-ignore a11y-autofocus -->
                         <TextInput
@@ -214,7 +210,9 @@
                         on:click={() => editTab(component)}
                         isSelected={component === $selected}
                     >
-                        {component.name}.{component.type}{#if component.modified}*{/if}
+                    <span style="max-width: 120px; overflow: hidden">
+                        {#if component.modified}*{/if}{component.name}.{component.type}
+                    </span>
 
                         <Button
                             style="margin-left: auto"

@@ -1,8 +1,8 @@
 <script>
-    export let version = "latest";
+    import "bootstrap";
+    import css from "bootstrap/dist/css/bootstrap.min.css";
 </script>
 
 <svelte:head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@{version}/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@{version}/dist/js/bootstrap.bundle.min.js"></script>
+    {@html `<style>${css}</style>`}
 </svelte:head>
