@@ -94,6 +94,9 @@
             addImport,
             packages: builtinPackages,
         });
+        if ($selected.options.style) {
+            html += `<` + `style>${$selected.options.style}</style>`;
+        }
         var headers = Object.entries(imports)
             .map(([name, path]) => {
                 if (path.startsWith("!")) {
@@ -103,6 +106,9 @@
                 return `  import ${name} from ${JSON.stringify(path)}`;
             })
             .join("\n");
+        if ($selected.options.script) {
+            headers += `\n${$selected.options.script}`;
+        }
         if (headers) {
             html = `<script>\n${headers}\n<\/script>\n${html}`;
         }

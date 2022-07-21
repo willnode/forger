@@ -18,15 +18,23 @@ export interface Component {
 }
 
 export interface ComponentOptions {
-    freeId: number
+    freeId: number,
+    script: string,
+    style: string,
 }
 
 
 export interface ReplContext {
-   components: Writable<Component[]>
-   selected: Writable<Component>
-   navigate: any
-   handle_change: (e: {detail:{value: string, template: Record<string, Template>}}) => void
+    components: Writable<Component[]>
+    selected: Writable<Component>
+    navigate: any
+    bundle: any
+    handle_change: (e: { detail: { value: string, template: Record<string, Template> } }) => void
+}
+
+export interface AppContext {
+    clipboard: Writable<Preset | null>
+    project: Writable<Project>
 }
 
 export interface Preset {
@@ -39,7 +47,7 @@ export interface Template {
     id: string
     widget: string
     props: Record<string, string>
-    items: {id: string}[]
+    items: { id: string }[]
 }
 
 export type PackageList = Record<string, Record<string, Record<string, Widget>>>
@@ -62,7 +70,7 @@ export interface Widget {
 }
 
 export interface WidgetProp {
-    type: "text" | "textarea" | "select" | "prop-select" | "prop"
+    type: "text" | "textarea" | "select" | "prop-select" | "prop-select-multi" | "prop"
     options?: string[],
     name: string,
     label?: string,

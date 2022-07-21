@@ -51,8 +51,11 @@
 
   const project = writable(initProject);
 
+  const clipboard = writable(null);
+
   setContext("APP", {
     project,
+    clipboard,
   });
 
   onMount(function () {

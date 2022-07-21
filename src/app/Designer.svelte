@@ -3,7 +3,8 @@
     import type { ReplContext } from "../types";
     import TemplateEditor from "./TemplateEditor.svelte";
     import { createEventDispatcher } from "svelte";
-import Message from "../../repl/src/Message.svelte";
+    import Message from "../../repl/src/Message.svelte";
+    import { TextArea } from "carbon-components-svelte";
 
     export let selectedId: string = "";
 
@@ -12,13 +13,24 @@ import Message from "../../repl/src/Message.svelte";
 </script>
 
 <div style="margin-right: 2rem">
-    {#if $selected.template[selectedId] != null}
+    {#if selectedId == "1"}
+        <p>Document Properties</p>
+        <TextArea labelText="Custom Script" value={$selected.options.script} on:input={(e) => {
+            // @ts-ignore
+            $selected.options.script = e.currentTarget.value;
+            dispatch("change");
+        }} />
+        <TextArea labelText="Custom Style" value={$selected.options.style} on:input={(e) => {
+            // @ts-ignore
+            $selected.options.style = e.currentTarget.value;
+            dispatch("change");
+        }} />
+    {:else if $selected.template[selectedId] != null}
         <div>#{selectedId}</div>
         <TemplateEditor
             template={$selected.template[selectedId]}
             on:change={(e) => {
-                $selected.template[selectedId] = { ... e.detail };
-                console.log("AAAA" + JSON.stringify($selected.template[selectedId]))
+                $selected.template[selectedId] = { ...e.detail };
                 dispatch("change");
             }}
         />
@@ -28,10 +40,18 @@ import Message from "../../repl/src/Message.svelte";
 <div class="info" style="margin-top: 2em;">
     {#if $bundle}
         {#if $bundle.error}
-            <Message kind="error" details={$bundle.error} filename="{$selected.name}.{$selected.type}"/>
+            <Message
+                kind="error"
+                details={$bundle.error}
+                filename="{$selected.name}.{$selected.type}"
+            />
         {:else if $bundle.warnings.length > 0}
             {#each $bundle.warnings as warning}
-                <Message kind="warning" details={warning} filename="{$selected.name}.{$selected.type}"/>
+                <Message
+                    kind="warning"
+                    details={warning}
+                    filename="{$selected.name}.{$selected.type}"
+                />
             {/each}
         {/if}
     {/if}

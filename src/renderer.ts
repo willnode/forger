@@ -19,15 +19,24 @@ export function renderAttributes(attributes: Record<string, string>, context: Re
             return key + "=" + value;
         else if (value)
             return key + "={" + value + "}";
-    }).join(' ');
+    });
 }
 
-export function renderElement(element: string, attributes: Record<string, string>, children: string, context: RenderContext) {
-
+export function renderElement(element: string, attributes: Record<string, string>, customAttributes: string, children: string, context: RenderContext) {
+    let attrs = [];
+    if (attributes) {
+        attrs.push(...renderAttributes(attributes, context))
+    }
+    if (customAttributes) {
+        attrs.push(customAttributes);
+    }
+    if (attrs.length > 0) {
+        attrs.unshift('')
+    }
     if (!children) {
-        return `<${element} ${renderAttributes(attributes, context)}/>`;
+        return `<${element}${attrs.join(' ')}/>`;
     } else {
-        return `<${element} ${renderAttributes(attributes, context)}>${children}</${element}>`;
+        return `<${element}${attrs.join(' ')}>${children}</${element}>`;
     }
 }
 

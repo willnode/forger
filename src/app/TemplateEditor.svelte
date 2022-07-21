@@ -26,7 +26,7 @@
     import { join, ucfirst } from "../packages/shared/editor/utils";
     import WidgetSelector from "./WidgetSelector.svelte";
     import {
-Checkbox,
+        Checkbox,
         OverflowMenu,
         OverflowMenuItem,
         Select,
@@ -57,20 +57,23 @@ Checkbox,
         };
         template.props = { ...preset.props };
         template.items = preset.children.map((x) => addFunc(x));
-        console.log(template);
         handleEditorChange();
     }
 
-    function handlePropChange(prop: WidgetProp, val: any) {
-        if (prop && (prop.type == "prop-select" || prop.type == "select")) {
-            if (val) {
-                template.props[prop.name] = val;
-            } else {
-                delete template.props[prop.name];
+    function handlePropChange(prop: WidgetProp | string, val: any) {
+        if (typeof prop === "string") {
+            template.props[prop] = val;
+        } else {
+            if (prop && (prop.type == "prop-select" || prop.type == "select")) {
+                if (val) {
+                    template.props[prop.name] = val;
+                } else {
+                    delete template.props[prop.name];
+                }
             }
+            if (val || prop.persistent) template.props[prop.name] = val + "";
+            else delete template.props[prop.name];
         }
-        if (val || prop.persistent) template.props[prop.name] = val + "";
-        else delete template.props[prop.name];
         handleEditorChange();
     }
 </script>
@@ -145,13 +148,7 @@ Checkbox,
                             value={template.props[prop]}
                             labelText={ucfirst(prop)}
                             on:input={(e) => {
-                                if (e.detail)
-                                    template.props[prop] = e.detail + "";
-                                else delete template.props[prop];
-                                console.log(
-                                    prop + " :::: " + template.props[prop]
-                                );
-                                handleEditorChange();
+                                handlePropChange(prop, e.detail);
                             }}
                         />
                     {:else if prop.type == "text"}
@@ -193,6 +190,14 @@ Checkbox,
                         </Select>
                     {/if}
                 {/each}
+                <!-- custom -->
+                <TextArea
+                    value={template.props.custom}
+                    labelText={"Custom Attributes"}
+                    on:input={(e) =>
+                        // @ts-ignore
+                        handlePropChange("custom", e.currentTarget.value)}
+                />
             </div>
         {:else if widget.editor}
             <svelte:component

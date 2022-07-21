@@ -28,8 +28,7 @@ export function findWidget(name: string, packageList: PackageList) {
 export function renderWidget(template: Record<string, Template>, id: string, context: RenderContext): string {
     var node = template[id];
     if (!node) return '';
-    if (!node.widget) return node.props.text || "";
-    var childrenStr = node.items.map(t => renderWidget(template, t.id, context)).join('');
+    var childrenStr = node.props.text || node.items.map(t => renderWidget(template, t.id, context)).join('');
     var widget = findWidget(node.widget, context.packages);
     if (widget) {
         var varName = widget.name;
@@ -39,7 +38,7 @@ export function renderWidget(template: Record<string, Template>, id: string, con
             var path = `./packages/${widget.package}/${widget.name}.svelte`
             varName = context.addImport(varName, path);
         }
-        return renderElement(varName, node.props, childrenStr, context);
+        return renderElement(varName, node.props, node.props.custom || '', childrenStr, context);
     } else {
         return childrenStr;
     }

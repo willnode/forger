@@ -2,12 +2,20 @@
     import { flip } from "svelte/animate";
     import { Button } from "carbon-components-svelte";
     import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from "svelte-dnd-action";
-    import type { ReplContext, Template, Widget } from "../types";
+    import type {
+        AppContext,
+        Preset,
+        ReplContext,
+        Template,
+        Widget,
+    } from "../types";
     import { createEventDispatcher, getContext } from "svelte";
     import {
         Add,
         ChevronDown,
         ChevronRight,
+        Copy,
+        Paste,
         TrashCan,
     } from "carbon-icons-svelte";
     import { builtinPackages, findWidget } from "../packages";
@@ -15,6 +23,8 @@
     const dispatch = createEventDispatcher();
 
     const { selected }: ReplContext = getContext("REPL");
+
+    const { clipboard }: AppContext = getContext("APP");
 
     export let node: Template;
     export let selectedId: string;
@@ -40,6 +50,9 @@
         }
     }
     function handleAdd() {
+        if (!$selected.options.freeId) {
+            $selected.options.freeId = 0;
+        }
         const id = ($selected.options.freeId++).toString();
         $selected.modified = true;
         $selected.template[id] = {
@@ -49,6 +62,40 @@
             items: [],
         };
         node.items.push({ id });
+        dispatch("change");
+    }
+    function handleCopy() {
+        const saveFunc = (t: Template) => {
+            var p: Preset = {
+                element: t.widget,
+                props: t.props,
+                children: t.items.map((x) =>
+                    saveFunc($selected.template[x.id])
+                ),
+            };
+            return p;
+        };
+        clipboard.set(saveFunc($selected.template[selectedId]));
+    }
+    function handlePaste(e: any) {
+        const addFunc = (p: Preset) => {
+            if (!$selected.options.freeId) {
+                $selected.options.freeId = 0;
+            }
+            const id = ($selected.options.freeId++).toString();
+            $selected.template[id] = {
+                id,
+                widget: p.element,
+                props: { ...p.props },
+                items: p.children.map((x) => addFunc(x)),
+            };
+            return { id };
+        };
+        if (!$clipboard || !$selected.template[selectedId]) return;
+        $selected.template[selectedId].items.push(addFunc($clipboard));
+        if (!e.shiftKey) {
+            clipboard.set(null);
+        }
         dispatch("change");
     }
     function handleDelete() {
@@ -97,11 +144,19 @@
                 </div>
             </div>
         </Button>
-        <Button kind={"danger-ghost"} size="small" as let:props>
-            <div class:del={true} {...props} on:click={handleDelete}>
-                <TrashCan />
-            </div>
-        </Button>
+        {#if selectedId == node.id}
+            <Button kind={"ghost"} size="small" as let:props>
+                <div class:del={true} {...props} on:click={handleCopy}>
+                    <Copy />
+                </div>
+            </Button>
+        {:else}
+            <Button kind={"danger-ghost"} size="small" as let:props>
+                <div class:del={true} {...props} on:click={handleDelete}>
+                    <TrashCan />
+                </div>
+            </Button>
+        {/if}
     </div>
 
     {#if expanded}
@@ -130,8 +185,18 @@
                 size="small"
                 icon={Add}
                 iconDescription="Add child"
-                tooltipPosition="right"
+                tooltipPosition="bottom"
             />
+            {#if $clipboard}
+                <Button
+                    on:click={handlePaste}
+                    kind="primary"
+                    size="small"
+                    icon={Paste}
+                    iconDescription="Paste to child"
+                    tooltipPosition="bottom"
+                />
+            {/if}
         {/if}
     {/if}
 {/if}
