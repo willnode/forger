@@ -6,4 +6,6 @@
 
 body {
     --font-mono: 'Fira Mono', monospace;
+    --second: #6f6f6f;
+    --primary: #0f62fe;
 }

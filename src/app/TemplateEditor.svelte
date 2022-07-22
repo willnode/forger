@@ -27,6 +27,7 @@
     import WidgetSelector from "./WidgetSelector.svelte";
     import {
         Checkbox,
+        MultiSelect,
         OverflowMenu,
         OverflowMenuItem,
         Select,
@@ -64,15 +65,27 @@
         if (typeof prop === "string") {
             template.props[prop] = val;
         } else {
-            if (prop && (prop.type == "prop-select" || prop.type == "select")) {
-                if (val) {
-                    template.props[prop.name] = val;
-                } else {
-                    delete template.props[prop.name];
+            if (
+                (prop.type == "prop-select" ||
+                    prop.type == "prop-select-multi") &&
+                prop.options
+            ) {
+                var vals =
+                    prop.type == "prop-select-multi"
+                        ? (val + "").split(" ")
+                        : [val];
+                for (const option of prop.options) {
+                    if (vals.includes(option)) {
+                        template.props[option] = "true";
+                    } else {
+                        delete template.props[option];
+                    }
                 }
+            } else {
+                if (val || prop.persistent)
+                    template.props[prop.name] = val + "";
+                else delete template.props[prop.name];
             }
-            if (val || prop.persistent) template.props[prop.name] = val + "";
-            else delete template.props[prop.name];
         }
         handleEditorChange();
     }
@@ -188,16 +201,28 @@
                                 />
                             {/each}
                         </Select>
+                    {:else if prop.type == "prop-select-multi" && prop.options}
+                        <MultiSelect
+                            selectedIds={(template.props[prop.name] || "")
+                                .split(" ")
+                                .map((x) => ({ id: x }))}
+                            titleText={prop.label || ucfirst(prop.name)}
+                            label="Select multiple items..."
+                            items={prop.options.map((x) => ({
+                                id: x,
+                                text: ucfirst(x),
+                            }))}
+                            on:select={(e) =>
+                                // @ts-ignore
+                                handlePropChange(
+                                    prop,
+                                    e.detail.selectedIds
+                                        .map((x) => x.id)
+                                        .join(" ")
+                                )}
+                        />
                     {/if}
                 {/each}
-                <!-- custom -->
-                <TextArea
-                    value={template.props.custom}
-                    labelText={"Custom Attributes"}
-                    on:input={(e) =>
-                        // @ts-ignore
-                        handlePropChange("custom", e.currentTarget.value)}
-                />
             </div>
         {:else if widget.editor}
             <svelte:component
@@ -206,7 +231,25 @@
                 on:change={handleEditorChange}
                 key={widget.name}
             />
+        {:else}
+            <div style="margin: 1em 0;">This is a hidden component.</div>
         {/if}
+        <!-- custom -->
+        <hr style="border: 1px solid darkgrey;"/>
+        <TextInput
+            value={template.props.text}
+            labelText={"Text Content"}
+            on:input={(e) =>
+                // @ts-ignore
+                handlePropChange("text", e.detail)}
+        />
+        <TextArea
+            value={template.props.custom}
+            labelText={"Custom Attributes"}
+            on:input={(e) =>
+                // @ts-ignore
+                handlePropChange("custom", e.currentTarget.value)}
+        />
     {/key}
 {:else if template && template.widget == ""}
     <TextArea

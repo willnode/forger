@@ -1,11 +1,8 @@
 import type { Widget } from "../../types";
 import { h } from "../shared/editor/utils";
-import InitTemplate from "./Init.svelte?raw";
 
 const sizes = ["xs", "sm", "md", "lg", "xl", "xxl"];
 const colors = ["primary", "secondary", "success", "danger", "warning", "info", "light", "dark"];
-
-const s = (...s: string[]) => s.map(s => JSON.stringify(s));
 
 const widgets: Record<string, Record<string, Widget>> = {
     Layout: {
@@ -14,11 +11,10 @@ const widgets: Record<string, Record<string, Widget>> = {
             props: [{
                 type: "prop-select",
                 name: "size",
-                options: ["", ...s("fluid", ...sizes)],
+                options: ["", "fluid", ...sizes],
             }]
         },
         Row: {
-
             props: [{
                 type: "prop",
                 name: "noGutters",
@@ -26,22 +22,34 @@ const widgets: Record<string, Record<string, Widget>> = {
                 type: "select",
                 name: "cols",
                 options: ["", "1", "2", "3", "4", "6", "12"],
-            }]
+            }],
+            presets: {
+                AjaxListedRow: h("bootstrap.Layout.Row", { cols: "2" },
+                    h("global.Data.AjaxList", { "let:data": "item" },
+                        h("bootstrap.Layout.Col", {})
+                    )),
+                FourColumns: h("bootstrap.Layout.Row", { cols: "4" },
+                    h("bootstrap.Layout.Col", {}, h("", { text: "1" })),
+                    h("bootstrap.Layout.Col", {}, h("", { text: "2" })),
+                    h("bootstrap.Layout.Col", {}, h("", { text: "3" })),
+                    h("bootstrap.Layout.Col", {}, h("", { text: "4" })),
+                ),
+            }
         },
         Col: {
 
             props: [{
                 type: "select",
                 name: "xs",
-                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", ...s("auto")],
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
             }, {
                 type: "select",
                 name: "md",
-                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", ...s("auto")],
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
             }, {
                 type: "select",
                 name: "lg",
-                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", ...s("auto")],
+                options: ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "auto"],
             }]
         }
     },
@@ -51,13 +59,26 @@ const widgets: Record<string, Record<string, Widget>> = {
                 type: "text",
                 name: "caption",
             }],
+            default: {
+                props: {
+                    caption: "Beautiful image",
+                },
+            },
+            presets: {
+                FluidImage: h("bootstrap.Content.Figure", {
+                    caption: "Beautiful image",
+                }, h("bootstrap.Content.Image", {
+                    src: "https://picsum.photos/300/300",
+                    alt: "Beautiful image",
+                }))
+            },
             child: "single",
         },
         Image: {
             props: [{
                 type: "prop-select",
                 name: "size",
-                options: ["", ...s("fluid", "thumbnail")],
+                options: ["", "fluid", "thumbnail"],
             }, {
                 type: "text",
                 name: "alt",
@@ -81,20 +102,18 @@ const widgets: Record<string, Record<string, Widget>> = {
             props: [{
                 type: "select",
                 name: "size",
-                options: ["", ...s("sm", "md", "lg", "xl")],
+                options: ["", "sm", "md", "lg", "xl"],
             }, {
-                type: "prop",
-                name: "bordered",
-            }, {
-                type: "prop",
-                name: "striped",
-            }, {
-                type: "prop",
-                name: "hover",
-            }, {
-                type: "prop",
-                name: "condensed",
+                type: "prop-select-multi",
+                name: "styling",
+                options: ["bordered", "striped", "hover", "condensed", "dark"],
             }],
+            presets: {
+                SimpleTable: h("bootstrap.Content.Table", {},
+                    h("", { text: `<thead><tr>\n${["#", "First Name", "Last Name", "Username"].map(x => `<th>${x}</th>`).join('\n')}\n</tr></thead>` }),
+                    h("", { text: `<tbody><tr>\n${["#", "First Name", "Last Name", "Username"].map(x => `<td>${x}</td>`).join('\n')}\n</tr></tbody>` }),
+                )
+            }
         },
     },
     Component: {
@@ -108,11 +127,33 @@ const widgets: Record<string, Record<string, Widget>> = {
             }, {
                 type: "select",
                 name: "color",
-                options: ["", ...s(...colors)],
+                options: ["", ...colors],
             }, {
                 type: "text",
                 name: "class",
-            }]
+            }],
+            presets: {
+                SimpleCard: h("bootstrap.Component.Card", {
+                    body: "true"
+                }, h("bootstrap.Component.CardTitle", {
+                    text: "Card title",
+                }), h("bootstrap.Component.CardSubtitle", {
+                    text: "Card subtitle",
+                }), h("bootstrap.Component.Text", {
+                    text: "Some quick example text to build on the card title and make up the bulk of the card's content.",
+                }), h("bootstrap.Component.Button", {
+                    text: "Go somewhere",
+                })),
+                ImageCard: h("bootstrap.Component.Card", {
+                }, h("bootstrap.Content.Image", {
+                    src: "https://picsum.photos/300/300",
+                    alt: "Beautiful image",
+                }), h("bootstrap.Component.CardBody", {}, h("bootstrap.Component.CardTitle", {
+                    text: "Card title",
+                }), h("", {
+                    text: "Some quick example text to build on the card title and make up the bulk of the card's content.",
+                }))),
+            }
         },
         CardHeader: {},
         CardTitle: {},
@@ -167,13 +208,13 @@ const widgets: Record<string, Record<string, Widget>> = {
                 type: "prop",
                 name: "outline",
             }, {
-                type: "prop-select",
+                type: "select",
                 name: "size",
-                options: ["", ...s("sm", "lg")],
+                options: ["", "sm", "lg"],
             }, {
                 type: "select",
                 name: "color",
-                options: ["", ...s(...colors)],
+                options: ["", ...colors],
             }, {
                 type: "text",
                 name: "text",
@@ -200,7 +241,7 @@ const widgets: Record<string, Record<string, Widget>> = {
                 name: "label",
             }]
         },
-        
+
         FormText: {
             props: [{
                 type: "textarea",
@@ -218,7 +259,7 @@ const widgets: Record<string, Record<string, Widget>> = {
             }, {
                 type: "select",
                 name: "color",
-                options: ["", ...s(...colors)],
+                options: ["", ...colors],
             }, {
                 type: "text",
                 name: "href",
@@ -246,18 +287,18 @@ const widgets: Record<string, Record<string, Widget>> = {
             }, {
                 type: "select",
                 name: "color",
-                options: ["", ...s(...colors)],
+                options: ["", ...colors],
             }]
         },
         Spinner: {
             props: [{
                 type: "select",
                 name: "color",
-                options: ["", ...s(...colors)],
+                options: ["", ...colors],
             }, {
                 type: "select",
                 name: "size",
-                options: ["", ...s(...sizes)],
+                options: ["", ...sizes],
             }, {
                 type: "select",
                 name: "type",

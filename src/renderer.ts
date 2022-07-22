@@ -12,14 +12,23 @@ const kebabize = (str: string) => {
 export function renderAttributes(attributes: Record<string, string>, context: RenderContext) {
     return Object.keys(attributes).map(function (key) {
         var value = attributes[key].trim();
+        if (key === "text" || key === "custom" || value === "false" || value === "null" || value === "undefined") {
+            return "";
+        }
         if (value.startsWith("@import(") && value.endsWith(")")) {
             value = context.addImport("", value.substring(8, value.length - 1));
         }
-        if (value.startsWith('"') && value.endsWith('"'))
+        if (value == "true") {
+            return key;
+        } else if (value.startsWith('{') && value.endsWith('}')) {
             return key + "=" + value;
-        else if (value)
-            return key + "={" + value + "}";
-    });
+        } else if (value.startsWith('"') && value.endsWith('"')) {
+            return key + "=" + value;
+        } else if (/^-?[0-9]+$/.test(value)) {
+            return `${key}={${value}}`;
+        } else if (value)
+            return `${key}="${value}"`;
+    }).filter(x => x);
 }
 
 export function renderElement(element: string, attributes: Record<string, string>, customAttributes: string, children: string, context: RenderContext) {

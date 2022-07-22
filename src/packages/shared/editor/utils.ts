@@ -53,7 +53,7 @@ export function h(element: string, props: Record<string, string>, ...children: (
   // add all value props a double quote
   Object.keys(props).forEach(key => {
     if (typeof props[key] === "string") {
-      props[key] = JSON.stringify(props[key]);
+      props[key] = key == "text" || props[key].includes(":") ? props[key] : JSON.stringify(props[key]);
     }
   });
   // set all text to proper children
