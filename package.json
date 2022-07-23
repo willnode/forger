@@ -28,8 +28,10 @@
     "yootils": "0.0.16"
   },
   "dependencies": {
+    "@msgpack/msgpack": "^2.7.2",
     "buffer": "^6.0.3",
     "client-zip": "^1.5.1",
+    "dexie": "^3.2.2",
     "dot-prop": "^7.2.0",
     "js-yaml": "^4.1.0",
     "ky": "^0.31.0",

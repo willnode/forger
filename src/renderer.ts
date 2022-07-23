@@ -1,4 +1,4 @@
-import type { RenderContext } from "./types";
+import type { Component, RenderContext } from "./types";
 import ExportFiles from "./assets/export";
 
 const kebabize = (str: string) => {
@@ -57,16 +57,35 @@ export function renderStyle(style: Record<string, string>) {
 }
 
 export function setupProjectFiles(data: {
-    imports: any;
-    components: any[];
+    imports: string[];
+    components: Component[];
 }, filename: string) {
-    console.log(data.imports);
-    const files = data.components.map(x => ({
-        name: `${filename}/src/${x.name}.${x.type}`,
-        lastModified: new Date(),
-        input: x.source,
-    }));
+    const files: any[] = [];
+
+    data.components.forEach(x => {
+        files.push({
+            name: `${filename}/src/${x.name}.${x.type}`,
+            lastModified: new Date(),
+            input: x.source,
+        });
+        if (x.type === "svelte" && x.template["1"]) {
+            files.push({
+                name: `${filename}/src/${x.name}.template.json`,
+                lastModified: new Date(),
+                input: JSON.stringify({template: x.template, options: x.options}, null, 2),
+            });
+        }
+    });
     Object.entries(ExportFiles).forEach(([key, value]) => {
+        if (key === "package.json") {
+            var json = JSON.parse(value);
+            json.name = filename;
+            json.dependencies = Object.assign(json.dependencies, data.imports.reduce((acc: Record<string, string>, x) => {
+                acc[x] = "*";
+                return acc;
+            }, {}));
+            value = JSON.stringify(json, null, 2);
+        }
         files.push({
             name: `${filename}/${key}`,
             lastModified: new Date(),

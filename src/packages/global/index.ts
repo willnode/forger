@@ -37,8 +37,8 @@ const widgets: Record<string, Record<string, Widget>> = {
             child: "single",
             default: {
                 props: {
-                    url: '""',
-                    "let:data": "item",
+                    url: '',
+                    "let:data": "{item}",
                 }
             },
             files: {

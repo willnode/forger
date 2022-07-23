@@ -54,6 +54,10 @@
                 props: { ...p.props },
                 items: p.children.map((x) => addFunc(x)),
             };
+            const widget = findWidget(p.element, builtinPackages);
+            if (widget) {
+                handleAddFile(widget);
+            }
             return { id };
         };
         template.props = { ...preset.props };
@@ -89,6 +93,33 @@
         }
         handleEditorChange();
     }
+
+    function handleAddFile(widget: Widget & { package: string }) {
+        // add to components
+        if (widget && widget.files) {
+            Object.entries(widget.files).forEach(([name, file]) => {
+                const [nameWithoutExt, ext] = name.split(".", 2);
+                var path = join(`packages/${widget.package}/`, nameWithoutExt);
+                const component = $components.find(
+                    (c) => c.name === path && c.type === ext
+                );
+                if (!component) {
+                    $components.push({
+                        name: path,
+                        type: ext,
+                        source: file,
+                        template: {},
+                        modified: true,
+                        options: {
+                            freeId: 1,
+                        },
+                    });
+                } else {
+                    component.source = file;
+                }
+            });
+        }
+    }
 </script>
 
 {#if widget && widget.presets}
@@ -115,33 +146,7 @@
                         widget: e.detail,
                         props: { ...(widget.default?.props || {}) },
                     });
-                }
-                // add to components
-                if (widget && widget.files) {
-                    Object.entries(widget.files).forEach(([name, file]) => {
-                        const [nameWithoutExt, ext] = name.split(".", 2);
-                        var path = join(
-                            `packages/${widget.package}/`,
-                            nameWithoutExt
-                        );
-                        const component = $components.find(
-                            (c) => c.name === path && c.type === ext
-                        );
-                        if (!component) {
-                            $components.push({
-                                name: path,
-                                type: ext,
-                                source: file,
-                                template: {},
-                                modified: true,
-                                options: {
-                                    freeId: 1,
-                                },
-                            });
-                        } else {
-                            component.source = file;
-                        }
-                    });
+                    handleAddFile(widget);
                 }
             } else {
                 widget = null;
@@ -235,7 +240,7 @@
             <div style="margin: 1em 0;">This is a hidden component.</div>
         {/if}
         <!-- custom -->
-        <hr style="border: 1px solid darkgrey;"/>
+        <hr style="border: 1px solid darkgrey;" />
         <TextInput
             value={template.props.text}
             labelText={"Text Content"}

@@ -50,12 +50,6 @@ export function divDisplayName(props: Record<string, string>) {
 }
 
 export function h(element: string, props: Record<string, string>, ...children: (string | Preset)[]): Preset {
-  // add all value props a double quote
-  Object.keys(props).forEach(key => {
-    if (typeof props[key] === "string") {
-      props[key] = key == "text" || props[key].includes(":") ? props[key] : JSON.stringify(props[key]);
-    }
-  });
   // set all text to proper children
   return {
     element, props, children: children.map((child: (string | Preset)) => {

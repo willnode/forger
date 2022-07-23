@@ -136,11 +136,7 @@
                     {/if}
                 </div>
                 <div class="text">
-                    {widget
-                        ? (divDisplayName(node.props) || widget.category) +
-                          " - " +
-                          widget.name
-                        : "Text"}
+                    {(widget && widget.name) || "Text"}
                 </div>
             </div>
         </Button>

@@ -13,6 +13,7 @@
         Download,
         List,
         FileStorage,
+        Folder,
     } from "carbon-icons-svelte";
     export let designerMode = false;
     export let showHierarchy = false;
@@ -26,8 +27,8 @@
             size="small"
             kind="ghost"
             on:click={() => {
-                designerMode = !designerMode
-                dispatch("switchDesigner")
+                designerMode = !designerMode;
+                dispatch("switchDesigner");
             }}
             icon={designerMode ? Ruler : Edit}
             tooltipPosition="bottom"
@@ -40,7 +41,7 @@
         <Button
             size="small"
             kind={showHierarchy ? "primary" : "ghost"}
-            on:click={() => showHierarchy = !showHierarchy}
+            on:click={() => (showHierarchy = !showHierarchy)}
             tooltipPosition="bottom"
             tooltipAlignment="start"
             iconDescription={showHierarchy
@@ -51,7 +52,7 @@
         <Button
             size="small"
             kind={showFiles ? "primary" : "ghost"}
-            on:click={() => showFiles = !showFiles}
+            on:click={() => (showFiles = !showFiles)}
             icon={FileStorage}
             tooltipPosition="bottom"
             tooltipAlignment="start"
@@ -60,28 +61,40 @@
         <Button
             size="small"
             kind="ghost"
-            on:click={() => dispatch("save")}
+            on:click={() => dispatch("save", "storage")}
             icon={Save}
             tooltipAlignment="start"
             tooltipPosition="bottom"
-            iconDescription="Save (to session storage)"
+            iconDescription="Save (in local storage)"
         />
         <OverflowMenu>
-            <OverflowMenuItem text="To local storage" />
-            <OverflowMenuItem text="To file (download)" />
+            <OverflowMenuItem
+                text="Download project"
+                on:click={() => dispatch("save", "download")}
+            />
+            <OverflowMenuItem
+                text="Export as Svelte project (ZIP)"
+                on:click={() => dispatch("save", "export")}
+            />
         </OverflowMenu>
         <Button
             size="small"
             kind="ghost"
-            on:click={() => dispatch("export")}
-            icon={Download}
+            on:click={() => dispatch("load", "storage")}
+            icon={Folder}
             tooltipAlignment="start"
             tooltipPosition="bottom"
-            iconDescription="Export Svelte project (as ZIP)"
+            iconDescription="Load from local storage"
         />
-        <OverflowMenu>
-            <OverflowMenuItem text="To local storage" />
-            <OverflowMenuItem text="To file (download)" />
+        <OverflowMenu width={500}>
+            <OverflowMenuItem
+                text="Open from file"
+                on:click={() => dispatch("load", "file")}
+            />
+            <OverflowMenuItem
+                text="Reload fresh new project"
+                on:click={() => dispatch("load", "new")}
+            />
         </OverflowMenu>
     </ButtonSet>
 </div>

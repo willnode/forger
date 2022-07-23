@@ -1,17 +1,29 @@
+import Dexie, { type Table } from "dexie";
 import type { Writable } from "svelte/store";
+import type Repl from "../repl/src/Repl.svelte";
 
 export interface Project {
     files: Component[],
     options: {
+        schema: "1",
         name: string,
         packages: string[],
         imports: string[],
+        updatedAt: string,
+        createdAt: string,
     }
 }
+
+export interface ProjectFile {
+    name: string,
+    file: Uint8Array,
+    updatedAt: string,
+}
+
 export interface Component {
     type: string
     name: string
-    source: string
+    source: string | Uint8Array
     template: Record<string, Template>
     options: Partial<ComponentOptions>
     modified: boolean
@@ -35,6 +47,8 @@ export interface ReplContext {
 export interface AppContext {
     clipboard: Writable<Preset | null>
     project: Writable<Project>
+    repl: Writable<Repl>
+    files_db: ProjectFilesDB
 }
 
 export interface Preset {
@@ -76,3 +90,16 @@ export interface WidgetProp {
     label?: string,
     persistent?: boolean,
 }
+
+export class ProjectFilesDB extends Dexie {
+    // 'friends' is added by dexie when declaring the stores()
+    // We just tell the typing system this is the case
+    project!: Table<ProjectFile>; 
+  
+    constructor() {
+      super('forger-project-library');
+      this.version(1).stores({
+        project: 'name' // Primary key and indexed props
+      });
+    }
+  }

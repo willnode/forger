@@ -2,17 +2,19 @@
   import { onMount, setContext } from "svelte";
 
   import Repl from "../repl/src/Repl.svelte";
-  import { repl } from "./store";
   import Container from "./app/Container.svelte";
-  import type { Component, Project } from "./types";
+  import { type AppContext, ProjectFilesDB, type Project } from "./types";
   import mainJs from "./assets/export/main.js?raw";
-  import { writable } from "svelte/store";
+  import { writable, type Writable } from "svelte/store";
 
   const initProject: Project = {
     options: {
-      name: "My App",
+      schema: "1",
+      name: "",
       packages: ["global", "bootstrap"],
       imports: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     files: [
       {
@@ -51,17 +53,20 @@
 
   const project = writable(initProject);
 
+  const repl: Writable<Repl> = writable();
+
   const clipboard = writable(null);
 
-  setContext("APP", {
+  export const files_db = new ProjectFilesDB();
+
+  setContext<AppContext>("APP", {
     project,
     clipboard,
+    repl,
+    files_db,
   });
 
   onMount(function () {
-    if (window.sessionStorage.project) {
-      project.set(JSON.parse(window.sessionStorage.project));
-    }
     $repl.set({
       components: $project.files,
     });

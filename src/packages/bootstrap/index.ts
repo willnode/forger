@@ -24,9 +24,13 @@ const widgets: Record<string, Record<string, Widget>> = {
                 options: ["", "1", "2", "3", "4", "6", "12"],
             }],
             presets: {
-                AjaxListedRow: h("bootstrap.Layout.Row", { cols: "2" },
-                    h("global.Data.AjaxList", { "let:data": "item" },
-                        h("bootstrap.Layout.Col", {})
+                SampleAjaxCard: h("bootstrap.Layout.Row", { cols: "2" },
+                    h("global.Data.AjaxList", { "let:data": "{item}", "url": "https://picsum.photos/v2/list" },
+                        h("bootstrap.Layout.Col", {},
+                            h("bootstrap.Component.Card", {},
+                                h("bootstrap.Content.Image", { "src": "{item.download_url}/../../300/300", "alt": "{item.author}" }),
+                                h("bootstrap.Component.CardBody", {},
+                                    h("bootstrap.Component.CardTitle", { "text": "Image by {item.author}" }))))
                     )),
                 FourColumns: h("bootstrap.Layout.Row", { cols: "4" },
                     h("bootstrap.Layout.Col", {}, h("", { text: "1" })),

@@ -277,7 +277,7 @@
 		bind:this={refs.editor}
 		readonly
 		value={code}
-	></textarea>
+	/>
 
 	{#if !CodeMirror}
 		<pre style="position: absolute; left: 0; top: 0"
