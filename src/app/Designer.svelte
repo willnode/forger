@@ -14,26 +14,36 @@
 
 <div style="margin-right: 2rem">
     {#if selectedId == "1"}
-        <p>Document Properties</p>
-        <TextArea labelText="Custom Script" value={$selected.options.script} on:input={(e) => {
-            // @ts-ignore
-            $selected.options.script = e.currentTarget.value;
-            dispatch("change");
-        }} />
-        <TextArea labelText="Custom Style" value={$selected.options.style} on:input={(e) => {
-            // @ts-ignore
-            $selected.options.style = e.currentTarget.value;
-            dispatch("change");
-        }} />
-    {:else if $selected.template[selectedId] != null}
-        <div>#{selectedId}</div>
-        <TemplateEditor
-            template={$selected.template[selectedId]}
-            on:change={(e) => {
-                $selected.template[selectedId] = { ...e.detail };
+        <p>./src/{$selected.name}.{$selected.type}</p>
+        <TextArea
+            labelText="Custom Script"
+            value={$selected.options.script}
+            on:input={(e) => {
+                // @ts-ignore
+                $selected.options.script = e.currentTarget.value;
                 dispatch("change");
             }}
         />
+        <TextArea
+            labelText="Custom Style"
+            value={$selected.options.style}
+            on:input={(e) => {
+                // @ts-ignore
+                $selected.options.style = e.currentTarget.value;
+                dispatch("change");
+            }}
+        />
+    {:else if $selected.template[selectedId] != null}
+        {#key selectedId}
+            <div>#{selectedId}</div>
+            <TemplateEditor
+                template={$selected.template[selectedId]}
+                on:change={(e) => {
+                    $selected.template[selectedId] = { ...e.detail };
+                    dispatch("change");
+                }}
+            />
+        {/key}
     {/if}
 </div>
 

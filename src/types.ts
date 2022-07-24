@@ -23,7 +23,8 @@ export interface ProjectFile {
 export interface Component {
     type: string
     name: string
-    source: string | Uint8Array
+    source: string
+    bytes?: Uint8Array
     template: Record<string, Template>
     options: Partial<ComponentOptions>
     modified: boolean

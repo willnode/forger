@@ -1,6 +1,7 @@
 <script lang="ts">
     import { getContext, onMount } from "svelte";
     import { downloadZip } from "client-zip";
+    import mime from "mime";
     import SplitPane from "../../repl/src/SplitPane.svelte";
     import type { AppContext, Project, ReplContext } from "../types";
     import Designer from "./Designer.svelte";
@@ -28,6 +29,10 @@
     onMount(() => {
         if (window.sessionStorage.project) {
             loadProject(window.sessionStorage.project);
+        } else {
+            $repl.set({
+                components: $project.files,
+            });
         }
     });
 
@@ -105,6 +110,15 @@
             return;
         }
         project.set(p);
+        $project.files.forEach((file) => {
+            if (file.bytes) {
+                const mimeText = mime.getType(file.type) || "text/plain";
+                var blob = new Blob([file.bytes], {
+                    type: mimeText,
+                });
+                file.source = `export default ` + JSON.stringify(URL.createObjectURL(blob)) + ";";
+            }
+        });
         $repl.set({
             components: $project.files,
         });
@@ -247,6 +261,7 @@
                     <Files
                         on:selected={() => {
                             setTimeout(onSwitchDesigner, 1);
+                            selectedId = "1";
                         }}
                     />
                 </section>

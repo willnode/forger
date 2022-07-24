@@ -1,20 +1,29 @@
-<script>
+<script type="ts">
     import {
         Button,
         SideNavItems,
         SideNavLink,
         TextInput,
     } from "carbon-components-svelte";
+    import mime from "mime";
+
     import { Add, TrashCan } from "carbon-icons-svelte";
     import { getContext, createEventDispatcher } from "svelte";
+    import type { Component, ReplContext } from "../types";
+    import { isBinary } from "../utils";
 
-    const { components, selected, handle_select, request_focus, rebundle } =
-        getContext("REPL");
+    const {
+        components,
+        selected,
+        handle_select,
+        request_focus,
+        rebundle,
+    }: ReplContext = getContext("REPL");
     const dispatch = createEventDispatcher();
 
-    let editing = null;
+    let editing: Component | null = null;
 
-    function selectComponent(component) {
+    function selectComponent(component: Component) {
         if ($selected !== component) {
             editing = null;
             handle_select(component);
@@ -22,7 +31,7 @@
         }
     }
 
-    function editTab(component) {
+    function editTab(component: Component) {
         if ($selected === component) {
             editing = $selected;
         }
@@ -53,7 +62,7 @@
         rebundle();
     }
 
-    function remove(component) {
+    function remove(component: Component) {
         let result = confirm(
             `Are you sure you want to delete ${component.name}.${component.type}?`
         );
@@ -118,6 +127,84 @@
         dispatch("add", { components: $components });
     }
 
+    function importFile() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.multiple = true;
+        input.onchange = (event) => {
+            const file: File = event.target.files[0];
+            const reader = new FileReader();
+            const filesplit = file.name.split(".");
+            const ext = filesplit.pop();
+            const name = filesplit.join(".");
+            if (!ext) return;
+            const mimeText = mime.getType(ext);
+            if (!mimeText) return;
+
+            reader.onload = (event) => {
+                const data = event.target?.result;
+                if (!data) return;
+                const component: Component = {
+                    name,
+                    type: ext,
+                    modified: false,
+                    source: "",
+                    options: {},
+                    template: {},
+                };
+                if (isBinary(file.name) && data instanceof ArrayBuffer) {
+                    var blob = new Blob([data], {
+                        type: mimeText,
+                    });
+                    component.source =
+                        `export default ` +
+                        JSON.stringify(URL.createObjectURL(blob)) +
+                        ";";
+                    component.bytes = data;
+                } else {
+                    component.source = data;
+                }
+
+                components.update((components) => components.concat(component));
+                handle_select(component);
+
+                dispatch("add", { components: $components });
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+
+        const component = {
+            name: uid++ ? `Component${uid}` : "Component1",
+            type: "svelte",
+            source: "",
+            modified: true,
+            options: {
+                freeId: 2,
+            },
+            template: {
+                "1": {
+                    id: "1",
+                    widget: "global.Content.Div",
+                    props: {},
+                    items: [],
+                },
+            },
+        };
+
+        editing = component;
+
+        setTimeout(() => {
+            // TODO we can do this without IDs
+            document.getElementById(component.name).scrollIntoView(false);
+        });
+
+        components.update((components) => components.concat(component));
+        handle_select(component);
+
+        dispatch("add", { components: $components });
+    }
+
     function isComponentNameUsed(editing) {
         return $components.find(
             (component) =>
@@ -126,8 +213,8 @@
     }
 
     // drag and drop
-    let from = null;
-    let over = null;
+    let from: string | null = null;
+    let over: string | null = null;
 
     function dragStart(event) {
         from = event.currentTarget.id;
@@ -206,13 +293,13 @@
                 {:else}
                     <SideNavLink
                         class="editable"
-                        title="edit component name"
+                        title="{component.name}.{component.type}"
                         on:click={() => editTab(component)}
                         isSelected={component === $selected}
                     >
-                    <span style="max-width: 120px; overflow: hidden">
-                        {#if component.modified}*{/if}{component.name}.{component.type}
-                    </span>
+                        <span style="max-width: 120px; overflow: hidden">
+                            {#if component.modified}*{/if}{component.name}.{component.type}
+                        </span>
 
                         <Button
                             style="margin-left: auto"
@@ -226,6 +313,7 @@
         {/each}
 
         <SideNavLink icon={Add} on:click={addNew} text="Add new component" />
+        <SideNavLink icon={Add} on:click={importFile} text="Import file" />
     </SideNavItems>
 </div>
 

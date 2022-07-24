@@ -65,12 +65,6 @@
     repl,
     files_db,
   });
-
-  onMount(function () {
-    $repl.set({
-      components: $project.files,
-    });
-  });
 </script>
 
 <main>
