@@ -118,7 +118,7 @@
 
         setTimeout(() => {
             // TODO we can do this without IDs
-            document.getElementById(component.name).scrollIntoView(false);
+            document.getElementById(component.name)?.scrollIntoView(false);
         });
 
         components.update((components) => components.concat(component));
@@ -142,7 +142,8 @@
             if (!mimeText) return;
 
             reader.onload = (event) => {
-                const data = event.target?.result;
+                // @ts-ignore
+                const data: ArrayBuffer = event.target.result;
                 if (!data) return;
                 const component: Component = {
                     name,
@@ -152,7 +153,7 @@
                     options: {},
                     template: {},
                 };
-                if (isBinary(file.name) && data instanceof ArrayBuffer) {
+                if (isBinary(file.name)) {
                     var blob = new Blob([data], {
                         type: mimeText,
                     });
@@ -162,47 +163,20 @@
                         ";";
                     component.bytes = data;
                 } else {
-                    component.source = data;
+                    var str = new TextDecoder().decode(data);
+                    component.source = str;
                 }
+
+                editing = component;
 
                 components.update((components) => components.concat(component));
                 handle_select(component);
 
                 dispatch("add", { components: $components });
             };
-            reader.readAsText(file);
+            reader.readAsArrayBuffer(file);
         };
         input.click();
-
-        const component = {
-            name: uid++ ? `Component${uid}` : "Component1",
-            type: "svelte",
-            source: "",
-            modified: true,
-            options: {
-                freeId: 2,
-            },
-            template: {
-                "1": {
-                    id: "1",
-                    widget: "global.Content.Div",
-                    props: {},
-                    items: [],
-                },
-            },
-        };
-
-        editing = component;
-
-        setTimeout(() => {
-            // TODO we can do this without IDs
-            document.getElementById(component.name).scrollIntoView(false);
-        });
-
-        components.update((components) => components.concat(component));
-        handle_select(component);
-
-        dispatch("add", { components: $components });
     }
 
     function isComponentNameUsed(editing) {

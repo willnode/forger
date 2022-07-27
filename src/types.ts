@@ -16,7 +16,7 @@ export interface Project {
 
 export interface ProjectFile {
     name: string,
-    file: Uint8Array,
+    file: ArrayBuffer,
     updatedAt: string,
 }
 
@@ -24,7 +24,7 @@ export interface Component {
     type: string
     name: string
     source: string
-    bytes?: Uint8Array
+    bytes?: ArrayBuffer
     template: Record<string, Template>
     options: Partial<ComponentOptions>
     modified: boolean
@@ -95,8 +95,8 @@ export interface WidgetProp {
 export class ProjectFilesDB extends Dexie {
     // 'friends' is added by dexie when declaring the stores()
     // We just tell the typing system this is the case
-    project!: Table<ProjectFile>; 
-  
+    project!: Table<ProjectFile>;
+
     constructor() {
       super('forger-project-library');
       this.version(1).stores({
