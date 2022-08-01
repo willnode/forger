@@ -12,8 +12,7 @@
     import { builtinPackages, renderWidget } from "../packages";
     import { ucfirst } from "../packages/shared/editor/utils";
     import { encode, decode } from "@msgpack/msgpack";
-    import { Button, Modal } from "carbon-components-svelte";
-    import { liveQuery } from "dexie";
+    import Modal from "carbon-components-svelte/src/Modal/Modal.svelte";
     import OpenDialog from "./OpenDialog.svelte";
     let designerMode = true;
     let showHierarchy = true;
@@ -116,7 +115,10 @@
                 var blob = new Blob([file.bytes], {
                     type: mimeText,
                 });
-                file.source = `export default ` + JSON.stringify(URL.createObjectURL(blob)) + ";";
+                file.source =
+                    `export default ` +
+                    JSON.stringify(URL.createObjectURL(blob)) +
+                    ";";
             }
         });
         $repl.set({

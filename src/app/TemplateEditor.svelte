@@ -25,17 +25,15 @@
     } from "../types";
     import { join, ucfirst } from "../packages/shared/editor/utils";
     import WidgetSelector from "./WidgetSelector.svelte";
-    import {
-        Checkbox,
-        MultiSelect,
-        OverflowMenu,
-        OverflowMenuItem,
-        Select,
-        SelectItem,
-        TextArea,
-        TextInput,
-    } from "carbon-components-svelte";
-    import { prop_dev } from "svelte/internal";
+    import Checkbox from "carbon-components-svelte/src/Checkbox/Checkbox.svelte";
+    import MultiSelect from "carbon-components-svelte/src/MultiSelect/MultiSelect.svelte";
+    import OverflowMenu from "carbon-components-svelte/src/OverflowMenu/OverflowMenu.svelte";
+    import OverflowMenuItem from "carbon-components-svelte/src/OverflowMenu/OverflowMenuItem.svelte";
+    import Select from "carbon-components-svelte/src/Select/Select.svelte";
+    import SelectItem from "carbon-components-svelte/src/Select/SelectItem.svelte";
+    import TextArea from "carbon-components-svelte/src/TextArea/TextArea.svelte";
+    import TextInput from "carbon-components-svelte/src/TextInput/TextInput.svelte";
+
     const dispatch = createEventDispatcher();
 
     function handleEditorChange() {

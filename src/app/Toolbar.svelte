@@ -1,20 +1,16 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import {
-        Button,
-        ButtonSet,
-        OverflowMenu,
-        OverflowMenuItem,
-    } from "carbon-components-svelte";
-    import {
-        Save,
-        Ruler,
-        Edit,
-        Download,
-        List,
-        FileStorage,
-        Folder,
-    } from "carbon-icons-svelte";
+    import Button from "carbon-components-svelte/src/Button/Button.svelte";
+    import ButtonSet from "carbon-components-svelte/src/Button/ButtonSet.svelte";
+    import OverflowMenu from "carbon-components-svelte/src/OverflowMenu/OverflowMenu.svelte";
+    import OverflowMenuItem from "carbon-components-svelte/src/OverflowMenu/OverflowMenuItem.svelte";
+
+    import Save from "carbon-icons-svelte/lib/Save.svelte";
+    import Ruler from "carbon-icons-svelte/lib/Ruler.svelte";
+    import Edit from "carbon-icons-svelte/lib/Edit.svelte";
+    import List from "carbon-icons-svelte/lib/List.svelte";
+    import FileStorage from "carbon-icons-svelte/lib/FileStorage.svelte";
+    import Folder from "carbon-icons-svelte/lib/Folder.svelte";
     export let designerMode = false;
     export let showHierarchy = false;
     export let showFiles = false;

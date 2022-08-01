@@ -1,0 +1,40 @@
+diff --git a/node_modules/readable-stream/lib/_stream_readable.js b/node_modules/readable-stream/lib/_stream_readable.js
+index 192d451..0434aa5 100644
+--- a/node_modules/readable-stream/lib/_stream_readable.js
++++ b/node_modules/readable-stream/lib/_stream_readable.js
+@@ -45,14 +45,12 @@ var Stream = require('./internal/streams/stream');
+ 
+ var Buffer = require('buffer').Buffer;
+ 
+-var OurUint8Array = global.Uint8Array || function () {};
+-
+ function _uint8ArrayToBuffer(chunk) {
+   return Buffer.from(chunk);
+ }
+ 
+ function _isUint8Array(obj) {
+-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
++  return Buffer.isBuffer(obj) || obj instanceof Uint8Array;
+ }
+ /*<replacement>*/
+ 
+diff --git a/node_modules/readable-stream/lib/_stream_writable.js b/node_modules/readable-stream/lib/_stream_writable.js
+index a2634d7..458d769 100644
+--- a/node_modules/readable-stream/lib/_stream_writable.js
++++ b/node_modules/readable-stream/lib/_stream_writable.js
+@@ -69,14 +69,12 @@ var Stream = require('./internal/streams/stream');
+ 
+ var Buffer = require('buffer').Buffer;
+ 
+-var OurUint8Array = global.Uint8Array || function () {};
+-
+ function _uint8ArrayToBuffer(chunk) {
+   return Buffer.from(chunk);
+ }
+ 
+ function _isUint8Array(obj) {
+-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
++  return Buffer.isBuffer(obj) || obj instanceof Uint8Array;
+ }
+ 
+ var destroyImpl = require('./internal/streams/destroy');

@@ -50,6 +50,8 @@ export default class ReplProxy {
 	handle_repl_message(event) {
 		if (event.source !== this.iframe.contentWindow) return;
 
+		console.log(event);
+
 		const { action, args } = event.data;
 
 		switch (action) {

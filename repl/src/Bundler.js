@@ -3,12 +3,27 @@ const workers = new Map();
 let uid = 1;
 
 export default class Bundler {
-	constructor({ workersUrl, packagesUrl, svelteUrl, onstatus }) {
+	constructor({
+		packagesUrl,
+		svelteUrl,
+		onstatus
+	}) {
 		const hash = `${packagesUrl}:${svelteUrl}`;
 
 		if (!workers.has(hash)) {
-			const worker = new Worker(`${workersUrl}/bundler.js`);
-			worker.postMessage({ type: 'init', packagesUrl, svelteUrl });
+			const url = new URL('./workers/packer/index.js',
+				import.meta.url)
+			const worker = new Worker(url, {
+				type: 'module'
+			});
+			worker.onerror = (...e) => {
+				console.error(e);
+			}
+			worker.postMessage({
+				type: 'init',
+				packagesUrl,
+				svelteUrl
+			});
 			workers.set(hash, worker);
 		}
 

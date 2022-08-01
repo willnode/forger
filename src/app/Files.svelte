@@ -1,13 +1,12 @@
 <script type="ts">
-    import {
-        Button,
-        SideNavItems,
-        SideNavLink,
-        TextInput,
-    } from "carbon-components-svelte";
+    import Button from "carbon-components-svelte/src/Button/Button.svelte";
+    import SideNavItems from "carbon-components-svelte/src/UIShell/SideNavItems.svelte";
+    import SideNavLink from "carbon-components-svelte/src/UIShell/SideNavLink.svelte";
+    import TextInput from "carbon-components-svelte/src/TextInput/TextInput.svelte";
     import mime from "mime";
 
-    import { Add, TrashCan } from "carbon-icons-svelte";
+    import Add from "carbon-icons-svelte/lib/Add.svelte";
+    import TrashCan from "carbon-icons-svelte/lib/TrashCan.svelte";
     import { getContext, createEventDispatcher } from "svelte";
     import type { Component, ReplContext } from "../types";
     import { isBinary } from "../utils";

@@ -70,7 +70,6 @@
 <main>
   <Repl
     bind:this={$repl}
-    workersUrl={import.meta.env.BASE_URL + "workers"}
     svelteUrl="https://unpkg.com/svelte@3"
     {Container}
   />

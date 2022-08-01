@@ -6,7 +6,7 @@ import nodePolyfills from 'rollup-plugin-polyfill-node';
 const dev = process.env.ROLLUP_WATCH;
 
 // bundle workers
-export default ['compiler', 'bundler'].map(x => ({
+export default ['packer'].map(x => ({
 	input: `src/workers/${x}/index.js`,
 	output: {
 		file: `../public/workers/${x}.js`,

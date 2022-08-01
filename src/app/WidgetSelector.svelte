@@ -3,11 +3,11 @@
     export let value = "";
     import { createEventDispatcher } from "svelte";
     import { ucfirst } from "../packages/shared/editor/utils";
-    import {
-        Select,
-        SelectItem,
-        SelectItemGroup,
-    } from "carbon-components-svelte";
+
+    import Select from "carbon-components-svelte/src/Select/Select.svelte";
+    import SelectItem from "carbon-components-svelte/src/Select/SelectItem.svelte";
+    import SelectItemGroup from "carbon-components-svelte/src/Select/SelectItemGroup.svelte";
+
     const dispatch = createEventDispatcher();
 </script>
 

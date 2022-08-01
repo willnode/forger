@@ -11,7 +11,8 @@
     "srcdoc": "npm run srcdoc:update && node scripts/build-srcdoc.js",
     "prepublishOnly": "npm run srcdoc && npm run build && npm test",
     "test": "echo \"no tests yet\"",
-    "lint": "eslint src/**.svelte src/**.js"
+    "lint": "eslint src/**.svelte src/**.js",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.0.6",
@@ -36,11 +37,21 @@
   "dependencies": {
     "codemirror": "^5.49.2",
     "estree-walker": "^0.9.0",
+    "events": "^3.3.0",
+    "fs": "npm:memfs",
     "marked": "^4.0.0",
+    "os": "npm:os-browserify",
+    "patch-package": "^6.4.7",
+    "path": "npm:path-browserify",
     "postcss": "^8.4.14",
     "postcss-import": "^14.1.0",
+    "sass": "^1.54.0",
     "sourcemap-codec": "^1.4.6",
+    "stream": "npm:stream-browserify",
     "svelte-json-tree": "0.0.5",
+    "svelte-listener": "git+https://github.com/RedHatter/svelte-listener.git",
+    "util": "^0.12.4",
+    "vite": "npm:browser-vite",
     "yootils": "0.0.16"
   }
 }

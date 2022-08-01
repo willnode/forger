@@ -4,7 +4,7 @@
     import TemplateEditor from "./TemplateEditor.svelte";
     import { createEventDispatcher } from "svelte";
     import Message from "../../repl/src/Message.svelte";
-    import { TextArea } from "carbon-components-svelte";
+    import TextArea from "carbon-components-svelte/src/TextArea/TextArea.svelte";
 
     export let selectedId: string = "";
 

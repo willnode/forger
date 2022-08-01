@@ -1,0 +1,64 @@
+diff --git a/node_modules/vite/dist/browser/index.js b/node_modules/vite/dist/browser/index.js
+index 960918e..5b9fef0 100644
+--- a/node_modules/vite/dist/browser/index.js
++++ b/node_modules/vite/dist/browser/index.js
+@@ -2,7 +2,7 @@ import path, { join, extname } from 'path';
+ import fs, { promises } from 'fs';
+ import { URL, parse, pathToFileURL } from 'url';
+ import resolve from 'resolve';
+-import { builtinModules } from 'module';
++// import { builtinModules } from 'module';
+ import remapping from '@ampproject/remapping';
+ import * as acorn from 'acorn';
+ import { parse as parse$3 } from 'acorn';
+@@ -110,7 +110,7 @@ function unwrapId(id) {
+ const flattenId = (id) => id.replace(/(\s*>\s*)/g, '__').replace(/[\/\.]/g, '_');
+ //TODO: revisit later to see if the edge case that "compiling using node v12 code to be run in node v16 in the server" is what we intend to support.
+ const builtins = new Set([
+-    ...builtinModules,
++    // ...builtinModules,
+     'assert/strict',
+     'diagnostics_channel',
+     'dns/promises',
+@@ -5375,6 +5375,7 @@ function transformCjsImport(importExp, url, rawUrl, importIndex) {
+ // ids in transform are normalized to unix style
+ const normalizedClientEntry = normalizePath(CLIENT_ENTRY);
+ const normalizedEnvEntry = normalizePath(ENV_ENTRY);
++export let NODE_ENV = 'NODE_ENV';
+ /**
+  * some values used by the client needs to be dynamically injected by the server
+  * @server-only
+@@ -5383,6 +5384,8 @@ function clientInjectionsPlugin(config) {
+     return {
+         name: 'vite:client-inject',
+         transform(code, id) {
++            let node_env = ['process', 'env']
++            node_env.push(NODE_ENV)
+             if (id === normalizedClientEntry || id === normalizedEnvEntry) {
+                 let options = config.server.hmr;
+                 options = options && typeof options !== 'boolean' ? options : {};
+@@ -5417,7 +5420,7 @@ function clientInjectionsPlugin(config) {
+                     .replace(`__HMR_TIMEOUT__`, JSON.stringify(timeout))
+                     .replace(`__HMR_ENABLE_OVERLAY__`, JSON.stringify(overlay));
+             }
+-            else if (code.includes('process.env.NODE_ENV')) {
++            else if (code.includes(node_env.join('.'))) {
+                 // replace process.env.NODE_ENV
+                 return code.replace(/\bprocess\.env\.NODE_ENV\b/g, JSON.stringify(config.mode));
+             }
+@@ -5473,11 +5476,10 @@ wasmHelper.toString();
+ 
+ function definePlugin(config) {
+     const isBuild = config.command === 'build';
+-    const processNodeEnv = {
+-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || config.mode),
+-        'global.process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || config.mode),
+-        'globalThis.process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || config.mode)
+-    };
++    let processNodeEnv = {}
++    // for (const key in ['process', 'global.process', 'globalThis.process']) {
++    //     processNodeEnv[key + '.env.' + NODE_ENV] = JSON.stringify(config.mode);
++    // }
+     const userDefine = {};
+     for (const key in config.define) {
+         const val = config.define[key];

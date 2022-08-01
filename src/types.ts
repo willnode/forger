@@ -42,6 +42,9 @@ export interface ReplContext {
     selected: Writable<Component>
     navigate: any
     bundle: any
+    handle_select: () => void,
+    request_focus: () => void,
+    rebundle: () => void,
     handle_change: (e: { detail: { value: string, template: Record<string, Template> } }) => void
 }
 
@@ -98,9 +101,9 @@ export class ProjectFilesDB extends Dexie {
     project!: Table<ProjectFile>;
 
     constructor() {
-      super('forger-project-library');
-      this.version(1).stores({
-        project: 'name' // Primary key and indexed props
-      });
+        super('forger-project-library');
+        this.version(1).stores({
+            project: 'name' // Primary key and indexed props
+        });
     }
-  }
+}

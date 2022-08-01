@@ -1,6 +1,6 @@
 <script lang="ts">
     import { flip } from "svelte/animate";
-    import { Button } from "carbon-components-svelte";
+    import Button from "carbon-components-svelte/src/Button/Button.svelte";
     import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from "svelte-dnd-action";
     import type {
         AppContext,
@@ -10,16 +10,13 @@
         Widget,
     } from "../types";
     import { createEventDispatcher, getContext } from "svelte";
-    import {
-        Add,
-        ChevronDown,
-        ChevronRight,
-        Copy,
-        Paste,
-        TrashCan,
-    } from "carbon-icons-svelte";
+    import Add from "carbon-icons-svelte/lib/Add.svelte";
+    import ChevronDown from "carbon-icons-svelte/lib/ChevronDown.svelte";
+    import ChevronRight from "carbon-icons-svelte/lib/ChevronRight.svelte";
+    import Copy from "carbon-icons-svelte/lib/Copy.svelte";
+    import Paste from "carbon-icons-svelte/lib/Paste.svelte";
+    import TrashCan from "carbon-icons-svelte/lib/TrashCan.svelte";
     import { builtinPackages, findWidget } from "../packages";
-    import { divDisplayName } from "../packages/shared/editor/utils";
     const dispatch = createEventDispatcher();
 
     const { selected }: ReplContext = getContext("REPL");

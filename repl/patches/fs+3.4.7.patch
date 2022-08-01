@@ -1,0 +1,13 @@
+diff --git a/node_modules/fs/lib/process.js b/node_modules/fs/lib/process.js
+index cc21b32..d92d400 100644
+--- a/node_modules/fs/lib/process.js
++++ b/node_modules/fs/lib/process.js
+@@ -24,7 +24,7 @@ var maybeReturnProcess = function () {
+     }
+ };
+ function createProcess() {
+-    var p = maybeReturnProcess() || {};
++    var p = {};
+     if (!p.cwd)
+         p.cwd = function () { return '/'; };
+     if (!p.nextTick)

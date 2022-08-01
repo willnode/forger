@@ -18,3 +18,14 @@ declare module 'dexie' {
     subscribe(run: Subscriber<T>): Unsubscriber | Subscription;
   }
 }
+
+import { Modal, Button } from "carbon-components-svelte";
+
+declare module 'carbon-components-svelte/src/Modal/Modal.svelte' {
+  export { Modal }
+}
+
+
+declare module 'carbon-components-svelte/src/Button/Button.svelte' {
+  export { Button }
+}

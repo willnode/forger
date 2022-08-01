@@ -21,7 +21,6 @@
 	}
 
 	export let status;
-	export let relaxed = false;
 	export let injectedJS = '';
 	export let injectedCSS = '';
 

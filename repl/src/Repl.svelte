@@ -6,11 +6,9 @@
 	import Bundler from "./Bundler.js";
 	import { is_browser } from "./env.js";
 
-	export let workersUrl;
 	export let packagesUrl = "https://unpkg.com";
-	export let svelteUrl = `${packagesUrl}/svelte`;
+	export let svelteUrl = `${packagesUrl}/svelte@3`;
 	export let embedded = false;
-	export let relaxed = false;
 	export let injectedJS = "";
 	export let injectedCSS = "";
 	export let Container;
@@ -74,10 +72,6 @@
 		}
 	}
 
-	if (!workersUrl) {
-		throw new Error(`You must supply workersUrl prop to <Repl>`);
-	}
-
 	const dispatch = createEventDispatcher();
 
 	const components = writable([]);
@@ -121,7 +115,7 @@
 		selected,
 		bundle,
 		compile_options,
-		
+
 		rebundle,
 		handle_select,
 		navigate: (item) => {
@@ -222,7 +216,6 @@
 	const bundler =
 		is_browser &&
 		new Bundler({
-			workersUrl,
 			packagesUrl,
 			svelteUrl,
 			onstatus: (message) => {
@@ -247,10 +240,8 @@
 	<section slot="output">
 		<Output
 			{svelteUrl}
-			{workersUrl}
 			{status}
 			{embedded}
-			{relaxed}
 			{injectedJS}
 			{injectedCSS}
 		/>

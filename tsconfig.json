@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src/**/*", "repl/**/*"],
+  "include": ["src/**/*", "repl/**/*", "vite-env.d.ts"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
   "compilerOptions": {
     "moduleResolution": "Node",

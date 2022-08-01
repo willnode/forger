@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Button, ButtonSet } from "carbon-components-svelte";
+    import Button from "carbon-components-svelte/src/Button/Button.svelte";
+    import ButtonSet from "carbon-components-svelte/src/Button/ButtonSet.svelte";
 
     import { liveQuery } from "dexie";
     import { getContext, createEventDispatcher } from "svelte";
