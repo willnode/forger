@@ -228,6 +228,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.5.tgz#96be8113b014e9e7f0c3609c4a25afadd85ff659"
   integrity sha512-En7tneq+j0qAiVwysBD79y86MT3ModuoIJbe7JXp+sb5UAjInSShmK3nXXMioBzfF7rXC12hv12d4IyCVwN4dA==
 
+"@types/node@^14.14.37":
+  version "14.18.23"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.23.tgz#70f5f20b0b1b38f696848c1d3647bb95694e615e"
+  integrity sha512-MhbCWN18R4GhO8ewQWAFK4TGQdBpXWByukz7cWyJmXhvRuCIaM/oWytGPqVmDzgEnnaIc9ss6HbU5mUi+vyZPA==
+
 "@types/resolve@1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@types/resolve/-/resolve-1.17.1.tgz#3afd6ad8967c77e4376c598a82ddd58f46ec45d6"
@@ -1959,6 +1964,13 @@ path-parse@^1.0.7:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz#d98454a9c3753d5790860f16f68867b9e46be1fd"
   integrity sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==
+
+"perf_hooks@npm:universal-perf-hooks":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/universal-perf-hooks/-/universal-perf-hooks-1.0.1.tgz#be360fb2f96048ba71cc1afb3950f8bb70a05925"
+  integrity sha512-XPbS20JvSJBIY5XOVS0n+TOEVysUuuFhiWFVLAPh9iRSdH5R2rWOVWlXMwiaUD8TVtMiuVDedmfyIYQdu+gkrw==
+  dependencies:
+    "@types/node" "^14.14.37"
 
 periscopic@^2.0.3:
   version "2.0.3"

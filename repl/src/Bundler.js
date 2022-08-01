@@ -47,14 +47,43 @@ export default class Bundler {
 		});
 	}
 
-	bundle(components) {
+	add(component) {
 		return new Promise(fulfil => {
 			this.handlers.set(uid, fulfil);
 
 			this.worker.postMessage({
 				uid,
-				type: 'bundle',
-				components
+				type: 'add',
+				component
+			});
+
+			uid += 1;
+		});
+	}
+
+
+	change(component) {
+		return new Promise(fulfil => {
+			this.handlers.set(uid, fulfil);
+
+			this.worker.postMessage({
+				uid,
+				type: 'change',
+				component
+			});
+
+			uid += 1;
+		});
+	}
+
+	unlink(component) {
+		return new Promise(fulfil => {
+			this.handlers.set(uid, fulfil);
+
+			this.worker.postMessage({
+				uid,
+				type: 'unlink',
+				component
 			});
 
 			uid += 1;

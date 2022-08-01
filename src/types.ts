@@ -42,9 +42,9 @@ export interface ReplContext {
     selected: Writable<Component>
     navigate: any
     bundle: any
-    handle_select: () => void,
+    handle_select: (component: Component) => void,
     request_focus: () => void,
-    rebundle: () => void,
+    rebundle: (type: "add" | "change" | "unlink", component: Component) => void,
     handle_change: (e: { detail: { value: string, template: Record<string, Template> } }) => void
 }
 

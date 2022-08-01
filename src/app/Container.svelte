@@ -20,7 +20,7 @@
     let showOpenDialog = false;
     let selectedId = "1";
 
-    const { selected, navigate, handle_change }: ReplContext =
+    const { selected, navigate, handle_change, rebundle }: ReplContext =
         getContext("REPL");
 
     const { project, repl, files_db }: AppContext = getContext("APP");
@@ -29,9 +29,7 @@
         if (window.sessionStorage.project) {
             loadProject(window.sessionStorage.project);
         } else {
-            $repl.set({
-                components: $project.files,
-            });
+            loadProject($project);
         }
     });
 
@@ -109,7 +107,7 @@
             return;
         }
         project.set(p);
-        $project.files.forEach((file) => {
+        p.files.forEach((file) => {
             if (file.bytes) {
                 const mimeText = mime.getType(file.type) || "text/plain";
                 var blob = new Blob([file.bytes], {
@@ -120,6 +118,7 @@
                     JSON.stringify(URL.createObjectURL(blob)) +
                     ";";
             }
+            rebundle('add', file)
         });
         $repl.set({
             components: $project.files,

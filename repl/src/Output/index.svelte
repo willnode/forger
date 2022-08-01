@@ -19,8 +19,8 @@
 			selected_type = selected.type;
 
 			if (selected.type === 'js' || selected.type === 'json') {
-				js_editor.set(`/* Select a component to see its compiled code */`);
-				css_editor.set(`/* Select a component to see its compiled code */`);
+				// js_editor.set(`/* Select a component to see its compiled code */`);
+				// css_editor.set(`/* Select a component to see its compiled code */`);
 				return;
 			}
 

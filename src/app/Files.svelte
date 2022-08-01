@@ -58,7 +58,8 @@
         // focus the editor, but wait a beat (so key events aren't misdirected)
         setTimeout(request_focus);
 
-        rebundle();
+        rebundle('unlink', { ...$selected, name: oldName });
+        rebundle('add', $selected);
     }
 
     function remove(component: Component) {
@@ -70,6 +71,7 @@
             const index = $components.indexOf(component);
 
             if (~index) {
+                rebundle("unlink", $components[index]);
                 components.set(
                     $components
                         .slice(0, index)
@@ -86,7 +88,10 @@
         }
     }
 
-    function selectInput(event) {
+    let oldName = '';
+
+    function selectInput(event: any) {
+        oldName = $selected.name;
         setTimeout(() => {
             event.target.select();
         });
@@ -122,6 +127,8 @@
 
         components.update((components) => components.concat(component));
         handle_select(component);
+        rebundle("add", component);
+
 
         dispatch("add", { components: $components });
     }
@@ -130,7 +137,7 @@
         const input = document.createElement("input");
         input.type = "file";
         input.multiple = true;
-        input.onchange = (event) => {
+        input.onchange = (event: any) => {
             const file: File = event.target.files[0];
             const reader = new FileReader();
             const filesplit = file.name.split(".");
@@ -178,7 +185,7 @@
         input.click();
     }
 
-    function isComponentNameUsed(editing) {
+    function isComponentNameUsed(editing: Component) {
         return $components.find(
             (component) =>
                 component !== editing && component.name === editing.name
@@ -189,7 +196,7 @@
     let from: string | null = null;
     let over: string | null = null;
 
-    function dragStart(event) {
+    function dragStart(event: any) {
         from = event.currentTarget.id;
     }
 
@@ -197,12 +204,12 @@
         over = null;
     }
 
-    function dragOver(event) {
+    function dragOver(event: any) {
         event.preventDefault();
         over = event.currentTarget.id;
     }
 
-    function dragEnd(event) {
+    function dragEnd(event: any) {
         event.preventDefault();
 
         if (from && over) {
@@ -257,10 +264,11 @@
                             on:focus={selectInput}
                             on:blur={closeEdit}
                             on:keydown={(e) =>
+                                editing !== null &&
                                 e.which === 13 &&
                                 !isComponentNameUsed(editing) &&
-                                e.target.blur()}
-                            invalid={isComponentNameUsed(editing)}
+                                e.target?.blur()}
+                            invalid={!!isComponentNameUsed(editing)}
                         />
                     </SideNavLink>
                 {:else}

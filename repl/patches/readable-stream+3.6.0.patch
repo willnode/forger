@@ -38,3 +38,15 @@ index a2634d7..458d769 100644
  }
  
  var destroyImpl = require('./internal/streams/destroy');
+diff --git a/node_modules/readable-stream/package.json b/node_modules/readable-stream/package.json
+index 0b0c4bd..07d030d 100644
+--- a/node_modules/readable-stream/package.json
++++ b/node_modules/readable-stream/package.json
+@@ -52,7 +52,6 @@
+     "pipe"
+   ],
+   "browser": {
+-    "util": false,
+     "worker_threads": false,
+     "./errors": "./errors-browser.js",
+     "./readable.js": "./readable-browser.js",

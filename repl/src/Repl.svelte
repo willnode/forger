@@ -26,7 +26,7 @@
 		components.set(data.components);
 		selected.set(data.components[0]);
 
-		rebundle();
+		// rebundle();
 
 		await module_editor_ready;
 		await output_ready;
@@ -95,9 +95,9 @@
 	let output;
 
 	let current_token;
-	async function rebundle() {
+	async function rebundle(type, component) {
 		const token = (current_token = {});
-		const result = await bundler.bundle($components);
+		const result = await bundler[type](component);
 		if (result && token === current_token) bundle.set(result);
 	}
 
@@ -131,6 +131,7 @@
 			// TODO select the line/column in question
 		},
 
+		// Used by CodeMirror Editor to update the source
 		handle_change: (event) => {
 			selected.update((component) => {
 				// TODO this is a bit hacky — we're relying on mutability
@@ -156,9 +157,9 @@
 			});
 
 			// recompile selected component
-			output.update($selected, $compile_options);
+			// output.update($selected, $compile_options);
 
-			rebundle();
+			rebundle('change', $selected);
 
 			dispatch("change", {
 				components: $components,
